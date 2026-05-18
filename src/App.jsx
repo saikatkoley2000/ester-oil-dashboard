@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 
 const N = "#1B3358";
 const NM = "#264573";
@@ -345,6 +345,67 @@ function StatCard({ label, value }) {
     </div>
   );
 }
+// ─── TRACKING (localStorage-persisted) ────────────────────────────────────────
+
+function useLocalStorage(key, initial) {
+  const [val, setVal] = useState(() => {
+    try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : initial; }
+    catch { return initial; }
+  });
+  const set = useCallback(v => {
+    setVal(prev => {
+      const next = typeof v === "function" ? v(prev) : v;
+      localStorage.setItem(key, JSON.stringify(next));
+      return next;
+    });
+  }, [key]);
+  return [val, set];
+}
+
+const STATUS_COLORS = { red:"#C62828", yellow:"#E6A817", green:"#2E7D32" };
+const STATUS_CYCLE = ["red","yellow","green"];
+const STATUS_LABELS = { red:"Not Started", yellow:"In Progress", green:"Completed" };
+
+function StatusBall({ id, tracking, setTracking }) {
+  const current = (tracking[id] && tracking[id].status) || "red";
+  const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(current) + 1) % 3];
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+      <button onClick={() => setTracking(t => ({ ...t, [id]: { ...t[id], status: next } }))}
+        title={STATUS_LABELS[current] + " → Click to change"}
+        style={{ width:20, height:20, borderRadius:"50%", background:STATUS_COLORS[current], border:"2px solid rgba(0,0,0,0.15)", cursor:"pointer", boxShadow:`0 0 6px ${STATUS_COLORS[current]}55`, transition:"all 0.2s" }} />
+      <span style={{ fontSize:11, color:GD, whiteSpace:"nowrap" }}>{STATUS_LABELS[current]}</span>
+    </div>
+  );
+}
+
+function CommentBox({ id, tracking, setTracking }) {
+  const [editing, setEditing] = useState(false);
+  const comment = (tracking[id] && tracking[id].comment) || "";
+  if (editing) {
+    return (
+      <div style={{ display:"flex", flexDirection:"column", gap:4, minWidth:180 }}>
+        <textarea
+          autoFocus
+          defaultValue={comment}
+          onBlur={e => { setTracking(t => ({ ...t, [id]: { ...t[id], comment: e.target.value } })); setEditing(false); }}
+          onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); e.target.blur(); } }}
+          style={{ padding:"6px 8px", border:`1px solid ${G}`, borderRadius:4, fontSize:12, resize:"vertical", minHeight:48, fontFamily:"inherit", outline:"none", background:"#FFFDE7" }}
+          placeholder="Add comment..."
+        />
+        <span style={{ fontSize:10, color:GD }}>Enter to save · Shift+Enter for newline</span>
+      </div>
+    );
+  }
+  return (
+    <div onClick={() => setEditing(true)} style={{ cursor:"pointer", minWidth:140, padding:"4px 6px", borderRadius:4, border:`1px dashed ${comment ? G : GR}`, background:comment ? "#FFFDE7" : "transparent", minHeight:28, display:"flex", alignItems:"center" }}>
+      {comment
+        ? <span style={{ fontSize:12, color:INK, lineHeight:1.4, whiteSpace:"pre-wrap", wordBreak:"break-word" }}>{comment}</span>
+        : <span style={{ fontSize:11, color:GD, fontStyle:"italic" }}>+ Add comment</span>
+      }
+    </div>
+  );
+}
 
 // ─── PAGES ────────────────────────────────────────────────────────────────────
 
@@ -462,6 +523,7 @@ function Advisory() {
 function CEAOffices() {
   const [search, setSearch] = useState("");
   const [zone, setZone] = useState("All");
+  const [tracking, setTracking] = useLocalStorage("track_cea", {});
   const filtered = useMemo(() => CEA_OFFICES.filter(o =>
     (zone==="All"||o.zone===zone) && (!search||[o.office,o.city,o.jurisdiction,o.contact].join(" ").toLowerCase().includes(search.toLowerCase()))
   ), [search, zone]);
@@ -475,15 +537,15 @@ function CEAOffices() {
         <SearchBar value={search} onChange={setSearch} placeholder="Search offices, jurisdictions..." />
         <FilterPills options={["National","North","West","South","East","NE"]} selected={zone} onChange={setZone} />
       </div>
-      <Table cols={["Office / RIO","City","Priority","Phone","Contact Officer","Jurisdiction","Full Address"]} rows={filtered.map(o=>[
+      <Table cols={["Status","Office / RIO","City","Priority","Contact Officer","Jurisdiction","Comment"]} rows={filtered.map(o=>{ const k="cea_"+o.office; return [
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <strong style={{color:N,fontSize:FS.base}}>{o.office}</strong>,
         o.city,
         <Badge text={o.priority} color={o.priority.includes("1–7")?G:N} textColor={W} />,
-        <span style={{fontSize:FS.base}}>{o.phone}</span>,
         <span style={{fontSize:FS.sm}}>{o.contact}</span>,
         <span style={{fontSize:FS.sm,color:GD}}>{o.jurisdiction}</span>,
-        <span style={{fontSize:FS.sm}}>{o.address}</span>
-      ])} />
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+      ];})} />
       <div style={{ marginTop:20, background:OW, borderRadius:8, padding:"14px 20px" }}>
         <p style={{ margin:"0 0 6px", fontWeight:700, color:N, fontSize:FS.md }}>Deliverable from Each RIO Visit</p>
         <p style={{ margin:0, fontSize:FS.base, color:INK, lineHeight:1.65 }}>Written product compliance acknowledgement OR countersigned meeting minutes — used in all state utility and PSU meetings. Also request RIO to circulate product information to utilities in their jurisdiction as a multiplier.</p>
@@ -495,6 +557,7 @@ function CEAOffices() {
 function PSUUtilities() {
   const [tab, setTab] = useState("psu");
   const [search, setSearch] = useState("");
+  const [tracking, setTracking] = useLocalStorage("track_psu", {});
   const filtPSU = useMemo(() => PSU_UTILITIES.filter(u => !search||[u.name,u.role,u.address].join(" ").toLowerCase().includes(search.toLowerCase())), [search]);
   const filtPG = useMemo(() => PG_REGIONS.filter(r => !search||[r.region,r.address,r.coverage].join(" ").toLowerCase().includes(search.toLowerCase())), [search]);
   return (
@@ -509,20 +572,21 @@ function PSUUtilities() {
         ))}
         <div style={{ marginLeft:"auto" }}><SearchBar value={search} onChange={setSearch} placeholder="Search..." /></div>
       </div>
-      {tab==="psu" && <Table cols={["Organisation","Role","Priority","Phone","Address","Category"]} rows={filtPSU.map(u=>[
+      {tab==="psu" && <Table cols={["Status","Organisation","Role","Priority","Category","Comment"]} rows={filtPSU.map(u=>{ const k="psu_"+u.name; return [
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <strong style={{color:N,fontSize:FS.base}}>{u.name}</strong>,
         <span style={{fontSize:FS.base,lineHeight:1.55}}>{u.role}</span>,
         <Badge text={u.priority} color={u.priority.includes("★")?G:N} textColor={W} />,
-        <span style={{fontSize:FS.base}}>{u.phone}</span>,
-        <span style={{fontSize:FS.sm}}>{u.address}</span>,
-        <span style={{fontSize:FS.sm,color:GD}}>{u.category}</span>
-      ])} />}
-      {tab==="pg" && <Table cols={["Region","Phone","States Covered","Address"]} rows={filtPG.map(r=>[
+        <span style={{fontSize:FS.sm,color:GD}}>{u.category}</span>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+      ];})} />}
+      {tab==="pg" && <Table cols={["Status","Region","Phone","States Covered","Comment"]} rows={filtPG.map(r=>{ const k="pg_"+r.region; return [
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <strong style={{color:N,fontSize:FS.base}}>{r.region}</strong>,
         <span style={{fontSize:FS.base}}>{r.phone}</span>,
         <span style={{fontSize:FS.base,color:GD}}>{r.coverage}</span>,
-        <span style={{fontSize:FS.sm}}>{r.address}</span>
-      ])} />}
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+      ];})} />}
     </div>
   );
 }
@@ -530,6 +594,7 @@ function PSUUtilities() {
 function StateTranscos() {
   const [search, setSearch] = useState("");
   const [zone, setZone] = useState("All");
+  const [tracking, setTracking] = useLocalStorage("track_transco", {});
   const filtered = useMemo(() => STATE_TRANSCOS.filter(t =>
     (zone==="All"||t.zone===zone) && (!search||[t.state,t.utility,t.hq].join(" ").toLowerCase().includes(search.toLowerCase()))
   ), [search, zone]);
@@ -550,13 +615,15 @@ function StateTranscos() {
         <SearchBar value={search} onChange={setSearch} placeholder="Search state, utility..." />
         <FilterPills options={["West","South","North","East","NE"]} selected={zone} onChange={setZone} />
       </div>
-      <Table cols={["State","Transmission Utility","HQ City","Zone","Visit Window"]} rows={filtered.map(t=>[
+      <Table cols={["Status","State","Transmission Utility","HQ City","Zone","Visit Window","Comment"]} rows={filtered.map(t=>{ const k="tc_"+t.utility; return [
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <span style={{fontSize:FS.base,fontWeight:600}}>{t.state}</span>,
         <strong style={{color:N,fontSize:FS.base}}>{t.utility}</strong>,
         t.hq,
         <Badge text={t.zone} color={zCol[t.zone]||GD} textColor={W} />,
-        <Badge text={t.priority} color={t.priority.includes("★")?G:OW} textColor={t.priority.includes("★")?W:INK} />
-      ])} />
+        <Badge text={t.priority} color={t.priority.includes("★")?G:OW} textColor={t.priority.includes("★")?W:INK} />,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+      ];})} />
     </div>
   );
 }
@@ -564,6 +631,7 @@ function StateTranscos() {
 function DISCOMs() {
   const [search, setSearch] = useState("");
   const [zone, setZone] = useState("All");
+  const [tracking, setTracking] = useLocalStorage("track_discom", {});
   const filtered = useMemo(() => DISCOMS.filter(d =>
     (zone==="All"||d.zone===zone) && (!search||[d.name,d.state].join(" ").toLowerCase().includes(search.toLowerCase()))
   ), [search, zone]);
@@ -587,12 +655,14 @@ function DISCOMs() {
         <SearchBar value={search} onChange={setSearch} placeholder="Search DISCOM, state..." />
         <FilterPills options={["North","West","South","East","NE"]} selected={zone} onChange={setZone} />
       </div>
-      <Table cols={["#","DISCOM / Utility","State","Zone"]} rows={filtered.map((d,i)=>[
+      <Table cols={["Status","#","DISCOM / Utility","State","Zone","Comment"]} rows={filtered.map((d,i)=>{ const k="dc_"+d.name; return [
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <span style={{color:GD,fontSize:FS.sm}}>{i+1}</span>,
         <strong style={{color:N,fontSize:FS.base}}>{d.name}</strong>,
         <span style={{fontSize:FS.base}}>{d.state}</span>,
-        <Badge text={d.zone} color={zCol[d.zone]||GD} textColor={W} />
-      ])} />
+        <Badge text={d.zone} color={zCol[d.zone]||GD} textColor={W} />,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+      ];})} />
     </div>
   );
 }
@@ -600,6 +670,7 @@ function DISCOMs() {
 function PrivateUtilities() {
   const [search, setSearch] = useState("");
   const [urgency, setUrgency] = useState("All");
+  const [tracking, setTracking] = useLocalStorage("track_private", {});
   const filtered = useMemo(() => PRIVATE_UTILITIES.filter(u =>
     (urgency==="All"||u.urgency===urgency) && (!search||[u.name,u.territory,u.hq].join(" ").toLowerCase().includes(search.toLowerCase()))
   ), [search, urgency]);
@@ -613,14 +684,15 @@ function PrivateUtilities() {
         <SearchBar value={search} onChange={setSearch} placeholder="Search utility, territory..." />
         <FilterPills options={["Highest","High","Medium"]} selected={urgency} onChange={setUrgency} />
       </div>
-      <Table cols={["Private Utility","Territory / Consumers","Headquarters","Priority Window","Urgency","SOTL Approach"]} rows={filtered.map(u=>[
+      <Table cols={["Status","Private Utility","Territory","HQ","Priority","Urgency","Comment"]} rows={filtered.map(u=>{ const k="pv_"+u.name; return [
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <strong style={{color:N,fontSize:FS.base}}>{u.name}</strong>,
         <span style={{fontSize:FS.base,lineHeight:1.55}}>{u.territory}</span>,
         <span style={{fontSize:FS.base}}>{u.hq}</span>,
         <Badge text={u.priority} color={N} textColor={W} />,
         <Badge text={u.urgency} color={u.urgency==="Highest"?G:u.urgency==="High"?NM:GD} textColor={W} />,
-        <span style={{fontSize:FS.base,lineHeight:1.55}}>{u.approach}</span>
-      ])} />
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+      ];})} />
     </div>
   );
 }
@@ -628,6 +700,7 @@ function PrivateUtilities() {
 function Manufacturers() {
   const [tier, setTier] = useState("t1");
   const [search, setSearch] = useState("");
+  const [tracking, setTracking] = useLocalStorage("track_mfr", {});
   const fT1 = useMemo(() => MANUFACTURERS_T1.filter(m => !search||[m.name,m.location,m.products,m.clients||""].join(" ").toLowerCase().includes(search.toLowerCase())), [search]);
   const fT2 = useMemo(() => MANUFACTURERS_T2.filter(m => !search||[m.name,m.location,m.products].join(" ").toLowerCase().includes(search.toLowerCase())), [search]);
   const fT3 = useMemo(() => MANUFACTURERS_T3.filter(m => !search||[m.name,m.location,m.products].join(" ").toLowerCase().includes(search.toLowerCase())), [search]);
@@ -646,44 +719,45 @@ function Manufacturers() {
         <div style={{ background:"#FFF8E7", border:`1px solid ${G}`, borderRadius:8, padding:"13px 18px", marginBottom:14, fontSize:FS.base }}>
           <strong>Tier 1 Protocol:</strong> Personal factory visit + complimentary trial quantities (33 kV+ units) + half-day technical seminar on IS/IEC ester oil standards + BOM specification inclusion request
         </div>
-        <Table cols={["Manufacturer","Location","Voltage","MVA Range","Key Products","Key Clients","Contact","Visit Window","Approach"]} rows={fT1.map(m=>[
+        <Table cols={["Status","Manufacturer","Location","Voltage","Key Products","Visit Window","Comment"]} rows={fT1.map(m=>{ const k="m1_"+m.name; return [
+          <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
           <strong style={{color:N,fontSize:FS.base}}>{m.name}</strong>,
           <span style={{fontSize:FS.base}}>{m.location}</span>,
           <Badge text={m.voltageRange} color={OW} textColor={INK} />,
-          <span style={{fontSize:FS.sm,color:GD}}>{m.mvaRange}</span>,
           <span style={{fontSize:FS.sm,lineHeight:1.6}}>{m.products}</span>,
-          <span style={{fontSize:FS.sm,color:GD,lineHeight:1.6}}>{m.clients}</span>,
-          <span style={{fontSize:FS.sm}}>{m.contact}</span>,
           <Badge text={m.window} color={N} textColor={W} />,
-          <span style={{fontSize:FS.sm,lineHeight:1.6}}>{m.approach}</span>
-        ])} />
+          <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+        ];})} />
       </>}
 
       {tier==="t2" && <>
         <div style={{ background:OW, border:`1px solid ${GR}`, borderRadius:8, padding:"13px 18px", marginBottom:14, fontSize:FS.base }}>
           <strong>Tier 2 Protocol:</strong> Factory visit + trial quantity offer + BOM specification request | Days 40–70 | Coordinate visits with nearby Tier-1 OEM and utility visits for efficiency
         </div>
-        <Table cols={["Manufacturer","Location","Voltage","MVA Range","Key Products & Clients","Visit Window"]} rows={fT2.map(m=>[
+        <Table cols={["Status","Manufacturer","Location","Voltage","Key Products","Visit Window","Comment"]} rows={fT2.map(m=>{ const k="m2_"+m.name; return [
+          <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
           <strong style={{color:N,fontSize:FS.base}}>{m.name}</strong>,
           <span style={{fontSize:FS.base}}>{m.location}</span>,
           <Badge text={m.voltageRange} color={OW} textColor={INK} />,
-          <span style={{fontSize:FS.sm,color:GD}}>{m.mvaRange}</span>,
           <span style={{fontSize:FS.base,lineHeight:1.6}}>{m.products}</span>,
-          <Badge text={m.window} color={N} textColor={W} />
-        ])} />
+          <Badge text={m.window} color={N} textColor={W} />,
+          <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+        ];})} />
       </>}
 
       {tier==="t3" && <>
         <div style={{ background:OW, border:`1px solid ${GR}`, borderRadius:8, padding:"13px 18px", marginBottom:14, fontSize:FS.base }}>
           <strong>Tier 3 Protocol:</strong> Confirmation letter (Annexure A) dispatched by Day 14 | Follow-up calls Day 60–90 | Schedule factory visits based on positive responses | Regional State DISCOM suppliers
         </div>
-        <Table cols={["Manufacturer","Location","Voltage","Key Products","Visit Window"]} rows={fT3.map(m=>[
+        <Table cols={["Status","Manufacturer","Location","Voltage","Key Products","Visit Window","Comment"]} rows={fT3.map(m=>{ const k="m3_"+m.name; return [
+          <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
           <strong style={{color:N,fontSize:FS.base}}>{m.name}</strong>,
           <span style={{fontSize:FS.base}}>{m.location}</span>,
           <Badge text={m.voltageRange} color={OW} textColor={INK} />,
           <span style={{fontSize:FS.base,lineHeight:1.6}}>{m.products}</span>,
-          <Badge text={m.window} color={N} textColor={W} />
-        ])} />
+          <Badge text={m.window} color={N} textColor={W} />,
+          <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+        ];})} />
         <div style={{ marginTop:20, background:N, borderRadius:8, padding:"18px 22px" }}>
           <p style={{ margin:"0 0 8px", fontWeight:700, color:GL, fontSize:FS.lg }}>IEEMA DG Engagement — Days 70–90</p>
           <p style={{ margin:0, fontSize:FS.base, color:W, lineHeight:1.7 }}>IEEMA DG is a direct addressee of the CEA Advisory. Request a speaking slot at the next IEEMA Transformer Division meeting to address ALL member manufacturers collectively — one presentation reaches the entire industry simultaneously. Also request IEEMA to circulate the advisory to all member manufacturers as a multiplier at zero cost.</p>
@@ -745,7 +819,7 @@ function Timeline() {
 }
 
 function KPI() {
-  const [statuses, setStatuses] = useState(KPIS.map(()=>0));
+  const [statuses, setStatuses] = useLocalStorage("track_kpi", KPIS.map(()=>0));
   const labels = ["Not Started","In Progress","Completed"];
   const colors = [GD, G, "#2E7D32"];
   const cats = [...new Set(KPIS.map(k=>k.category))];
