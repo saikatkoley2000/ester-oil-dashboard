@@ -537,14 +537,14 @@ function CEAOffices() {
         <SearchBar value={search} onChange={setSearch} placeholder="Search offices, jurisdictions..." />
         <FilterPills options={["National","North","West","South","East","NE"]} selected={zone} onChange={setZone} />
       </div>
-      <Table cols={["Status","Office / RIO","City","Priority","Contact Officer","Jurisdiction","Comment"]} rows={filtered.map(o=>{ const k="cea_"+o.office; return [
+      <Table cols={["Status","Office / RIO","Comment","City","Priority","Contact Officer","Jurisdiction"]} rows={filtered.map(o=>{ const k="cea_"+o.office; return [
         <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <strong style={{color:N,fontSize:FS.base}}>{o.office}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />,
         o.city,
         <Badge text={o.priority} color={o.priority.includes("1–7")?G:N} textColor={W} />,
         <span style={{fontSize:FS.sm}}>{o.contact}</span>,
-        <span style={{fontSize:FS.sm,color:GD}}>{o.jurisdiction}</span>,
-        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+        <span style={{fontSize:FS.sm,color:GD}}>{o.jurisdiction}</span>
       ];})} />
       <div style={{ marginTop:20, background:OW, borderRadius:8, padding:"14px 20px" }}>
         <p style={{ margin:"0 0 6px", fontWeight:700, color:N, fontSize:FS.md }}>Deliverable from Each RIO Visit</p>
@@ -572,20 +572,20 @@ function PSUUtilities() {
         ))}
         <div style={{ marginLeft:"auto" }}><SearchBar value={search} onChange={setSearch} placeholder="Search..." /></div>
       </div>
-      {tab==="psu" && <Table cols={["Status","Organisation","Role","Priority","Category","Comment"]} rows={filtPSU.map(u=>{ const k="psu_"+u.name; return [
+      {tab==="psu" && <Table cols={["Status","Organisation","Comment","Role","Priority","Category"]} rows={filtPSU.map(u=>{ const k="psu_"+u.name; return [
         <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <strong style={{color:N,fontSize:FS.base}}>{u.name}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />,
         <span style={{fontSize:FS.base,lineHeight:1.55}}>{u.role}</span>,
         <Badge text={u.priority} color={u.priority.includes("★")?G:N} textColor={W} />,
-        <span style={{fontSize:FS.sm,color:GD}}>{u.category}</span>,
-        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+        <span style={{fontSize:FS.sm,color:GD}}>{u.category}</span>
       ];})} />}
-      {tab==="pg" && <Table cols={["Status","Region","Phone","States Covered","Comment"]} rows={filtPG.map(r=>{ const k="pg_"+r.region; return [
+      {tab==="pg" && <Table cols={["Status","Region","Comment","Phone","States Covered"]} rows={filtPG.map(r=>{ const k="pg_"+r.region; return [
         <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <strong style={{color:N,fontSize:FS.base}}>{r.region}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />,
         <span style={{fontSize:FS.base}}>{r.phone}</span>,
-        <span style={{fontSize:FS.base,color:GD}}>{r.coverage}</span>,
-        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+        <span style={{fontSize:FS.base,color:GD}}>{r.coverage}</span>
       ];})} />}
     </div>
   );
@@ -615,14 +615,14 @@ function StateTranscos() {
         <SearchBar value={search} onChange={setSearch} placeholder="Search state, utility..." />
         <FilterPills options={["West","South","North","East","NE"]} selected={zone} onChange={setZone} />
       </div>
-      <Table cols={["Status","State","Transmission Utility","HQ City","Zone","Visit Window","Comment"]} rows={filtered.map(t=>{ const k="tc_"+t.utility; return [
+      <Table cols={["Status","State","Transmission Utility","Comment","HQ City","Zone","Visit Window"]} rows={filtered.map(t=>{ const k="tc_"+t.utility; return [
         <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <span style={{fontSize:FS.base,fontWeight:600}}>{t.state}</span>,
         <strong style={{color:N,fontSize:FS.base}}>{t.utility}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />,
         t.hq,
         <Badge text={t.zone} color={zCol[t.zone]||GD} textColor={W} />,
-        <Badge text={t.priority} color={t.priority.includes("★")?G:OW} textColor={t.priority.includes("★")?W:INK} />,
-        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+        <Badge text={t.priority} color={t.priority.includes("★")?G:OW} textColor={t.priority.includes("★")?W:INK} />
       ];})} />
     </div>
   );
@@ -655,13 +655,13 @@ function DISCOMs() {
         <SearchBar value={search} onChange={setSearch} placeholder="Search DISCOM, state..." />
         <FilterPills options={["North","West","South","East","NE"]} selected={zone} onChange={setZone} />
       </div>
-      <Table cols={["Status","#","DISCOM / Utility","State","Zone","Comment"]} rows={filtered.map((d,i)=>{ const k="dc_"+d.name; return [
+      <Table cols={["Status","#","DISCOM / Utility","Comment","State","Zone"]} rows={filtered.map((d,i)=>{ const k="dc_"+d.name; return [
         <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <span style={{color:GD,fontSize:FS.sm}}>{i+1}</span>,
         <strong style={{color:N,fontSize:FS.base}}>{d.name}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />,
         <span style={{fontSize:FS.base}}>{d.state}</span>,
-        <Badge text={d.zone} color={zCol[d.zone]||GD} textColor={W} />,
-        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+        <Badge text={d.zone} color={zCol[d.zone]||GD} textColor={W} />
       ];})} />
     </div>
   );
@@ -684,14 +684,14 @@ function PrivateUtilities() {
         <SearchBar value={search} onChange={setSearch} placeholder="Search utility, territory..." />
         <FilterPills options={["Highest","High","Medium"]} selected={urgency} onChange={setUrgency} />
       </div>
-      <Table cols={["Status","Private Utility","Territory","HQ","Priority","Urgency","Comment"]} rows={filtered.map(u=>{ const k="pv_"+u.name; return [
+      <Table cols={["Status","Private Utility","Comment","Territory","HQ","Priority","Urgency"]} rows={filtered.map(u=>{ const k="pv_"+u.name; return [
         <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
         <strong style={{color:N,fontSize:FS.base}}>{u.name}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />,
         <span style={{fontSize:FS.base,lineHeight:1.55}}>{u.territory}</span>,
         <span style={{fontSize:FS.base}}>{u.hq}</span>,
         <Badge text={u.priority} color={N} textColor={W} />,
-        <Badge text={u.urgency} color={u.urgency==="Highest"?G:u.urgency==="High"?NM:GD} textColor={W} />,
-        <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+        <Badge text={u.urgency} color={u.urgency==="Highest"?G:u.urgency==="High"?NM:GD} textColor={W} />
       ];})} />
     </div>
   );
@@ -719,14 +719,14 @@ function Manufacturers() {
         <div style={{ background:"#FFF8E7", border:`1px solid ${G}`, borderRadius:8, padding:"13px 18px", marginBottom:14, fontSize:FS.base }}>
           <strong>Tier 1 Protocol:</strong> Personal factory visit + complimentary trial quantities (33 kV+ units) + half-day technical seminar on IS/IEC ester oil standards + BOM specification inclusion request
         </div>
-        <Table cols={["Status","Manufacturer","Location","Voltage","Key Products","Visit Window","Comment"]} rows={fT1.map(m=>{ const k="m1_"+m.name; return [
+        <Table cols={["Status","Manufacturer","Comment","Location","Voltage","Key Products","Visit Window"]} rows={fT1.map(m=>{ const k="m1_"+m.name; return [
           <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
           <strong style={{color:N,fontSize:FS.base}}>{m.name}</strong>,
+          <CommentBox id={k} tracking={tracking} setTracking={setTracking} />,
           <span style={{fontSize:FS.base}}>{m.location}</span>,
           <Badge text={m.voltageRange} color={OW} textColor={INK} />,
           <span style={{fontSize:FS.sm,lineHeight:1.6}}>{m.products}</span>,
-          <Badge text={m.window} color={N} textColor={W} />,
-          <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+          <Badge text={m.window} color={N} textColor={W} />
         ];})} />
       </>}
 
@@ -734,14 +734,14 @@ function Manufacturers() {
         <div style={{ background:OW, border:`1px solid ${GR}`, borderRadius:8, padding:"13px 18px", marginBottom:14, fontSize:FS.base }}>
           <strong>Tier 2 Protocol:</strong> Factory visit + trial quantity offer + BOM specification request | Days 40–70 | Coordinate visits with nearby Tier-1 OEM and utility visits for efficiency
         </div>
-        <Table cols={["Status","Manufacturer","Location","Voltage","Key Products","Visit Window","Comment"]} rows={fT2.map(m=>{ const k="m2_"+m.name; return [
+        <Table cols={["Status","Manufacturer","Comment","Location","Voltage","Key Products","Visit Window"]} rows={fT2.map(m=>{ const k="m2_"+m.name; return [
           <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
           <strong style={{color:N,fontSize:FS.base}}>{m.name}</strong>,
+          <CommentBox id={k} tracking={tracking} setTracking={setTracking} />,
           <span style={{fontSize:FS.base}}>{m.location}</span>,
           <Badge text={m.voltageRange} color={OW} textColor={INK} />,
           <span style={{fontSize:FS.base,lineHeight:1.6}}>{m.products}</span>,
-          <Badge text={m.window} color={N} textColor={W} />,
-          <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+          <Badge text={m.window} color={N} textColor={W} />
         ];})} />
       </>}
 
@@ -749,14 +749,14 @@ function Manufacturers() {
         <div style={{ background:OW, border:`1px solid ${GR}`, borderRadius:8, padding:"13px 18px", marginBottom:14, fontSize:FS.base }}>
           <strong>Tier 3 Protocol:</strong> Confirmation letter (Annexure A) dispatched by Day 14 | Follow-up calls Day 60–90 | Schedule factory visits based on positive responses | Regional State DISCOM suppliers
         </div>
-        <Table cols={["Status","Manufacturer","Location","Voltage","Key Products","Visit Window","Comment"]} rows={fT3.map(m=>{ const k="m3_"+m.name; return [
+        <Table cols={["Status","Manufacturer","Comment","Location","Voltage","Key Products","Visit Window"]} rows={fT3.map(m=>{ const k="m3_"+m.name; return [
           <StatusBall id={k} tracking={tracking} setTracking={setTracking} />,
           <strong style={{color:N,fontSize:FS.base}}>{m.name}</strong>,
+          <CommentBox id={k} tracking={tracking} setTracking={setTracking} />,
           <span style={{fontSize:FS.base}}>{m.location}</span>,
           <Badge text={m.voltageRange} color={OW} textColor={INK} />,
           <span style={{fontSize:FS.base,lineHeight:1.6}}>{m.products}</span>,
-          <Badge text={m.window} color={N} textColor={W} />,
-          <CommentBox id={k} tracking={tracking} setTracking={setTracking} />
+          <Badge text={m.window} color={N} textColor={W} />
         ];})} />
         <div style={{ marginTop:20, background:N, borderRadius:8, padding:"18px 22px" }}>
           <p style={{ margin:"0 0 8px", fontWeight:700, color:GL, fontSize:FS.lg }}>IEEMA DG Engagement — Days 70–90</p>
