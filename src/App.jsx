@@ -969,9 +969,95 @@ const NAV = [
   { id:"training", label:"Training Plan", icon:"🎓" },
 ];
 
-export default function App() {
+// ─── AUTH ──────────────────────────────────────────────────────────────────────
+
+const VALID_USER = "skoley@savita.com";
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function getTodayPassword() {
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2, "0");
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const yyyy = now.getFullYear();
+  const monthLetter = MONTHS[now.getMonth()][0]; // Already uppercase
+  return monthLetter + dd + mm + yyyy;
+}
+
+function LoginScreen({ onLogin }) {
+  const [user, setUser] = useState("");
+  const [pass, setPass] = useState("");
+  const [error, setError] = useState("");
+  const [showPass, setShowPass] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError("");
+    if (user.trim().toLowerCase() !== VALID_USER) {
+      setError("Invalid username");
+      return;
+    }
+    if (pass !== getTodayPassword()) {
+      setError("Invalid password");
+      return;
+    }
+    sessionStorage.setItem("sotl_auth", "1");
+    onLogin();
+  };
+
+  return (
+    <div style={{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", background:`linear-gradient(135deg, ${N} 0%, #0D1F38 100%)`, fontFamily:"system-ui,sans-serif" }}>
+      <div style={{ width:420, background:W, borderRadius:16, boxShadow:"0 20px 60px rgba(0,0,0,0.3)", overflow:"hidden" }}>
+        <div style={{ background:N, padding:"32px 36px 28px", textAlign:"center" }}>
+          <p style={{ margin:"0 0 4px", fontSize:11, fontWeight:700, color:GL, letterSpacing:3, textTransform:"uppercase" }}>Savita Oil Technologies</p>
+          <h1 style={{ margin:"0 0 6px", fontSize:22, fontWeight:800, color:W }}>Ester Oil Market Entry</h1>
+          <p style={{ margin:0, fontSize:13, color:"#7A96B4" }}>90–120 Day Plan | FY27 | Confidential</p>
+        </div>
+        <form onSubmit={handleSubmit} style={{ padding:"32px 36px 36px" }}>
+          <div style={{ marginBottom:20 }}>
+            <label style={{ display:"block", marginBottom:6, fontSize:13, fontWeight:700, color:GD, textTransform:"uppercase", letterSpacing:1 }}>Username</label>
+            <input value={user} onChange={e => setUser(e.target.value)} type="email" placeholder="Enter your email"
+              style={{ width:"100%", padding:"12px 14px", border:`2px solid ${GR}`, borderRadius:8, fontSize:15, outline:"none", background:OW, color:INK, boxSizing:"border-box", transition:"border 0.2s" }}
+              onFocus={e => e.target.style.borderColor=G} onBlur={e => e.target.style.borderColor=GR} />
+          </div>
+          <div style={{ marginBottom:24 }}>
+            <label style={{ display:"block", marginBottom:6, fontSize:13, fontWeight:700, color:GD, textTransform:"uppercase", letterSpacing:1 }}>Password</label>
+            <div style={{ position:"relative" }}>
+              <input value={pass} onChange={e => setPass(e.target.value)} type={showPass ? "text" : "password"} placeholder="Enter password"
+                style={{ width:"100%", padding:"12px 44px 12px 14px", border:`2px solid ${GR}`, borderRadius:8, fontSize:15, outline:"none", background:OW, color:INK, boxSizing:"border-box", transition:"border 0.2s" }}
+                onFocus={e => e.target.style.borderColor=G} onBlur={e => e.target.style.borderColor=GR} />
+              <button type="button" onClick={() => setShowPass(!showPass)}
+                style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", fontSize:18, color:GD, padding:4 }}>
+                {showPass ? "🙈" : "👁️"}
+              </button>
+            </div>
+          </div>
+          {error && (
+            <div style={{ background:"#FFF0F0", border:"1px solid #E53935", borderRadius:6, padding:"10px 14px", marginBottom:18, display:"flex", alignItems:"center", gap:8 }}>
+              <span style={{ fontSize:16 }}>⚠️</span>
+              <span style={{ fontSize:14, color:"#C62828", fontWeight:600 }}>{error}</span>
+            </div>
+          )}
+          <button type="submit"
+            style={{ width:"100%", padding:"14px 20px", background:N, color:W, border:"none", borderRadius:8, fontSize:16, fontWeight:700, cursor:"pointer", transition:"all 0.2s", letterSpacing:0.5 }}
+            onMouseEnter={e => e.target.style.background=NM}
+            onMouseLeave={e => e.target.style.background=N}>
+            🔐 Sign In
+          </button>
+          <p style={{ margin:"18px 0 0", fontSize:12, color:GD, textAlign:"center", lineHeight:1.5 }}>
+            Authorised personnel only · CEA Advisory I/64705/2026
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+
+function MainDashboard() {
   const [active, setActive] = useState("dashboard");
   const pages = { dashboard:<Dashboard/>, advisory:<Advisory/>, cea:<CEAOffices/>, psu:<PSUUtilities/>, transcos:<StateTranscos/>, discoms:<DISCOMs/>, private:<PrivateUtilities/>, manufacturers:<Manufacturers/>, timeline:<Timeline/>, kpi:<KPI/>, risk:<Risk/>, training:<Training/> };
+  const handleLogout = () => { sessionStorage.removeItem("sotl_auth"); window.location.reload(); };
   return (
     <div style={{ display:"flex", height:"100vh", fontFamily:"system-ui,sans-serif", background:OW }}>
       <div style={{ width:234, minWidth:234, background:N, display:"flex", flexDirection:"column", overflowY:"auto", boxShadow:"2px 0 8px rgba(0,0,0,0.15)" }}>
@@ -988,7 +1074,13 @@ export default function App() {
             </button>
           ))}
         </div>
-        <div style={{ padding:"14px 18px", borderTop:`1px solid ${NM}` }}>
+        <div style={{ padding:"10px 18px", borderTop:`1px solid ${NM}` }}>
+          <button onClick={handleLogout} style={{ width:"100%", padding:"9px 14px", background:"rgba(198,40,40,0.15)", border:"1px solid rgba(198,40,40,0.3)", borderRadius:6, color:"#E57373", fontSize:13, fontWeight:700, cursor:"pointer", transition:"all 0.2s" }}
+            onMouseEnter={e => { e.target.style.background="rgba(198,40,40,0.3)"; }} onMouseLeave={e => { e.target.style.background="rgba(198,40,40,0.15)"; }}>
+            🚪 Sign Out
+          </button>
+        </div>
+        <div style={{ padding:"10px 18px 14px" }}>
           <p style={{ margin:"0 0 3px", fontSize:12, color:"#7A96B4" }}>CEA Advisory</p>
           <p style={{ margin:0, fontSize:11, color:"#5A7A9A", lineHeight:1.4 }}>I/64705/2026 | 15 May 2026</p>
         </div>
@@ -998,4 +1090,10 @@ export default function App() {
       </div>
     </div>
   );
+}
+
+export default function App() {
+  const [authed, setAuthed] = useState(() => sessionStorage.getItem("sotl_auth") === "1");
+  if (!authed) return <LoginScreen onLogin={() => setAuthed(true)} />;
+  return <MainDashboard />;
 }
