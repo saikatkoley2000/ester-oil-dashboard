@@ -725,6 +725,7 @@ function DISCOMs(){
 
 function Generation(){
   const [search,setSearch]=useState(""); const [zone,setZone]=useState("All");
+  const [tracking,setTracking]=useLocalStorage("track_gen",{});
   const filtered=useMemo(()=>GENERATION.filter(g=>(zone==="All"||g.zone===zone)&&(!search||[g.state,g.company].join(" ").toLowerCase().includes(search.toLowerCase()))),[search,zone]);
   const zC=["West","South","North","East","NE"].reduce((a,z)=>({...a,[z]:GENERATION.filter(g=>g.zone===z).length}),{});
   return(
@@ -745,19 +746,21 @@ function Generation(){
         <SearchBar value={search} onChange={setSearch} placeholder="Search state, company..."/>
         <FilterPills options={["West","South","North","East","NE"]} selected={zone} onChange={setZone}/>
       </div>
-      <Table cols={["State / UT","Generation Company","HQ / Address","Pincode","Zone"]} rows={filtered.map(g=>[
+      <Table cols={["Status","State / UT","Generation Company","Comment","HQ / Address","Zone"]} rows={filtered.map(g=>{const k="gen_"+g.company;return[
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking}/>,
         <span style={{fontWeight:600,fontSize:FS.base}}>{g.state}</span>,
         <strong style={{color:N,fontSize:FS.base}}>{g.company}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking}/>,
         <span style={{fontSize:FS.sm}}>{g.address}</span>,
-        <span style={{color:GD,fontSize:FS.sm}}>{g.pin}</span>,
         <Badge text={g.zone} color={ZONE_COL[g.zone]||GD} textColor={W}/>
-      ])}/>
+      ];})}/>
     </div>
   );
 }
 
 function NodalAgencies(){
   const [search,setSearch]=useState(""); const [zone,setZone]=useState("All");
+  const [tracking,setTracking]=useLocalStorage("track_nodal",{});
   const filtered=useMemo(()=>NODAL_AGENCIES.filter(a=>(zone==="All"||a.zone===zone)&&(!search||[a.state,a.agency].join(" ").toLowerCase().includes(search.toLowerCase()))),[search,zone]);
   const zC=["West","South","North","East","NE"].reduce((a,z)=>({...a,[z]:NODAL_AGENCIES.filter(n=>n.zone===z).length}),{});
   return(
@@ -778,19 +781,21 @@ function NodalAgencies(){
         <SearchBar value={search} onChange={setSearch} placeholder="Search state, agency..."/>
         <FilterPills options={["West","South","North","East","NE"]} selected={zone} onChange={setZone}/>
       </div>
-      <Table cols={["State / UT","Nodal Agency","Full Address","Pincode","Zone"]} rows={filtered.map(a=>[
+      <Table cols={["Status","State / UT","Nodal Agency","Comment","Full Address","Zone"]} rows={filtered.map(a=>{const k="nodal_"+a.agency;return[
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking}/>,
         <span style={{fontWeight:600,fontSize:FS.base}}>{a.state}</span>,
         <strong style={{color:N,fontSize:FS.base}}>{a.agency}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking}/>,
         <span style={{fontSize:FS.sm}}>{a.address}</span>,
-        <span style={{color:GD,fontSize:FS.sm}}>{a.pin}</span>,
         <Badge text={a.zone} color={ZONE_COL[a.zone]||GD} textColor={W}/>
-      ])}/>
+      ];})}/>
     </div>
   );
 }
 
 function EPCCompanies(){
   const [tier,setTier]=useState("t1"); const [search,setSearch]=useState("");
+  const [tracking,setTracking]=useLocalStorage("track_epc",{});
   const fT1=useMemo(()=>EPC_T1.filter(m=>!search||[m.name,m.location,m.segments].join(" ").toLowerCase().includes(search.toLowerCase())),[search]);
   const fT2=useMemo(()=>EPC_T2.filter(m=>!search||[m.name,m.location,m.segments].join(" ").toLowerCase().includes(search.toLowerCase())),[search]);
   const fT3=useMemo(()=>EPC_T3.filter(m=>!search||[m.name,m.location,m.segments].join(" ").toLowerCase().includes(search.toLowerCase())),[search]);
@@ -806,24 +811,30 @@ function EPCCompanies(){
         ))}
         <div style={{marginLeft:"auto"}}><SearchBar value={search} onChange={setSearch} placeholder="Search company, location, segment..."/></div>
       </div>
-      {tier==="t1"&&<Table cols={["Company","Location","Key Segments","Website"]} rows={fT1.map(m=>[
+      {tier==="t1"&&<Table cols={["Status","Company","Comment","Location","Key Segments","Website"]} rows={fT1.map(m=>{const k="epc1_"+m.name;return[
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking}/>,
         <strong style={{color:N,fontSize:FS.base}}>{m.name}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking}/>,
         <span style={{fontSize:FS.base}}>{m.location}</span>,
         <span style={{fontSize:FS.base,lineHeight:1.6}}>{m.segments}</span>,
         <a href={`https://${m.website}`} target="_blank" rel="noreferrer" style={{color:G,fontSize:FS.sm}}>{m.website}</a>
-      ])}/>}
-      {tier==="t2"&&<Table cols={["Company","Location","Key Segments","Website"]} rows={fT2.map(m=>[
+      ];})}/>}
+      {tier==="t2"&&<Table cols={["Status","Company","Comment","Location","Key Segments","Website"]} rows={fT2.map(m=>{const k="epc2_"+m.name;return[
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking}/>,
         <strong style={{color:N,fontSize:FS.base}}>{m.name}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking}/>,
         <span style={{fontSize:FS.base}}>{m.location}</span>,
         <span style={{fontSize:FS.base,lineHeight:1.6}}>{m.segments}</span>,
         <a href={`https://${m.website}`} target="_blank" rel="noreferrer" style={{color:G,fontSize:FS.sm}}>{m.website}</a>
-      ])}/>}
-      {tier==="t3"&&<Table cols={["Company","Location","Key Segments","Website"]} rows={fT3.map(m=>[
+      ];})}/>}
+      {tier==="t3"&&<Table cols={["Status","Company","Comment","Location","Key Segments","Website"]} rows={fT3.map(m=>{const k="epc3_"+m.name;return[
+        <StatusBall id={k} tracking={tracking} setTracking={setTracking}/>,
         <strong style={{color:N,fontSize:FS.base}}>{m.name}</strong>,
+        <CommentBox id={k} tracking={tracking} setTracking={setTracking}/>,
         <span style={{fontSize:FS.base}}>{m.location}</span>,
         <span style={{fontSize:FS.base,lineHeight:1.6}}>{m.segments}</span>,
         <a href={`https://${m.website}`} target="_blank" rel="noreferrer" style={{color:G,fontSize:FS.sm}}>{m.website}</a>
-      ])}/>}
+      ];})}/>}
     </div>
   );
 }
