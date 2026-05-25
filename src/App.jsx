@@ -504,6 +504,184 @@ function CommentBox({ id, tracking, setTracking }) {
   );
 }
 
+// ─── STATE HELPERS ────────────────────────────────────────────────────────────
+
+const CITY_STATE={"Haridwar":"Uttarakhand","Bhopal":"Madhya Pradesh","Jhansi":"Uttar Pradesh","Vadodara":"Gujarat","Kalwa":"Maharashtra","Thane":"Maharashtra","Nashik":"Maharashtra","Mumbai":"Maharashtra","Kanjurmarg":"Maharashtra","Moraiya":"Gujarat","Ahmedabad":"Gujarat","Bengaluru":"Karnataka","Delhi":"Delhi","NCR":"Delhi","New Delhi":"Delhi","Noida":"Uttar Pradesh","Kolkata":"West Bengal","Chennai":"Tamil Nadu","Hyderabad":"Telangana","Pune":"Maharashtra","Lucknow":"Uttar Pradesh","Jaipur":"Rajasthan","Ranchi":"Jharkhand","Gurugram":"Haryana","Ludhiana":"Punjab","Erode":"Tamil Nadu","Hisar":"Haryana","Udaipur":"Rajasthan","Agra":"Uttar Pradesh","Durgapur":"West Bengal","Anand":"Gujarat","Aurangabad":"Maharashtra","Silvassa":"D&NH and D&D","Guwahati":"Assam","Moradabad":"Uttar Pradesh","Mysuru":"Karnataka","Mehsana":"Gujarat","Surat":"Gujarat","Rajkot":"Gujarat","Patiala":"Punjab","Meerut":"Uttar Pradesh","Varanasi":"Uttar Pradesh","Greater Noida":"Uttar Pradesh","Indore":"Madhya Pradesh","Jabalpur":"Madhya Pradesh","Shimla":"Himachal Pradesh","Dehradun":"Uttarakhand","Gangtok":"Sikkim","Imphal":"Manipur","Shillong":"Meghalaya","Aizawl":"Mizoram","Kohima":"Nagaland","Agartala":"Tripura","Itanagar":"Arunachal Pradesh","Port Blair":"Andaman & Nicobar","Panaji":"Goa","Kavaratti":"Lakshadweep","Raipur":"Chhattisgarh","Patna":"Bihar","Bhubaneswar":"Odisha","Sambalpur":"Odisha","Berhampur":"Odisha","Balasore":"Odisha","Visakhapatnam":"Andhra Pradesh","Vijayawada":"Andhra Pradesh","Tirupati":"Andhra Pradesh","Mangaluru":"Karnataka","Mysore":"Karnataka","Hubballi":"Karnataka","Kalaburagi":"Karnataka"};
+
+const ALL_STATES=[...new Set([...STATE_TRANSCOS.map(t=>t.state),...DISCOMS.map(d=>d.state),...GENERATION.map(g=>g.state),...NODAL_AGENCIES.map(a=>a.state)])].sort();
+
+function getStatesFromLocation(loc){
+  const states=new Set();
+  ALL_STATES.forEach(s=>{if(loc.includes(s))states.add(s);});
+  Object.entries(CITY_STATE).forEach(([city,state])=>{if(loc.includes(city))states.add(state);});
+  return[...states];
+}
+
+function getStatus(tracking,key){return(tracking[key]&&tracking[key].status)||"red";}
+
+function StatesView(){
+  const [sel,setSel]=useState("");
+  const [search,setSearch]=useState("");
+  const [tCea,sCea]=useLocalStorage("track_cea",{});
+  const [tPsu,sPsu]=useLocalStorage("track_psu",{});
+  const [tTc,sTc]=useLocalStorage("track_transco",{});
+  const [tDc,sDc]=useLocalStorage("track_discom",{});
+  const [tGen,sGen]=useLocalStorage("track_gen",{});
+  const [tNod,sNod]=useLocalStorage("track_nodal",{});
+  const [tEpc,sEpc]=useLocalStorage("track_epc",{});
+  const [tMfr,sMfr]=useLocalStorage("track_mfr",{});
+
+  const stateData=useMemo(()=>{
+    const map={};
+    ALL_STATES.forEach(s=>{map[s]={transcos:[],discoms:[],generation:[],nodal:[],epc:[],manufacturers:[]};});
+    STATE_TRANSCOS.forEach(t=>{if(map[t.state])map[t.state].transcos.push(t);});
+    DISCOMS.forEach(d=>{if(map[d.state])map[d.state].discoms.push(d);});
+    GENERATION.forEach(g=>{if(map[g.state])map[g.state].generation.push(g);});
+    NODAL_AGENCIES.forEach(a=>{if(map[a.state])map[a.state].nodal.push(a);});
+    [...EPC_T1.map(e=>({...e,tier:"1"})),...EPC_T2.map(e=>({...e,tier:"2"})),...EPC_T3.map(e=>({...e,tier:"3"}))].forEach(e=>{
+      getStatesFromLocation(e.location).forEach(s=>{if(map[s])map[s].epc.push(e);});
+    });
+    [...MANUFACTURERS_T1.map(m=>({...m,tier:"1"})),...MANUFACTURERS_T2.map(m=>({...m,tier:"2"})),...MANUFACTURERS_T3.map(m=>({...m,tier:"3"}))].forEach(m=>{
+      getStatesFromLocation(m.location).forEach(s=>{if(map[s])map[s].manufacturers.push(m);});
+    });
+    return map;
+  },[]);
+
+  const summary=useMemo(()=>{
+    return ALL_STATES.map(s=>{
+      const d=stateData[s];
+      const total=d.transcos.length+d.discoms.length+d.generation.length+d.nodal.length+d.epc.length+d.manufacturers.length;
+      let green=0,yellow=0,red=0;
+      d.transcos.forEach(t=>{const st=getStatus(tTc,"tc_"+t.utility);st==="green"?green++:st==="yellow"?yellow++:red++;});
+      d.discoms.forEach(x=>{const st=getStatus(tDc,"dc_"+x.name);st==="green"?green++:st==="yellow"?yellow++:red++;});
+      d.generation.forEach(x=>{const st=getStatus(tGen,"gen_"+x.company);st==="green"?green++:st==="yellow"?yellow++:red++;});
+      d.nodal.forEach(x=>{const st=getStatus(tNod,"nodal_"+x.agency);st==="green"?green++:st==="yellow"?yellow++:red++;});
+      d.epc.forEach(x=>{const st=getStatus(tEpc,"epc"+x.tier+"_"+x.name);st==="green"?green++:st==="yellow"?yellow++:red++;});
+      d.manufacturers.forEach(x=>{const st=getStatus(tMfr,"m"+x.tier+"_"+x.name);st==="green"?green++:st==="yellow"?yellow++:red++;});
+      return{state:s,total,green,yellow,red};
+    }).filter(s=>s.total>0);
+  },[stateData,tTc,tDc,tGen,tNod,tEpc,tMfr]);
+
+  const filteredStates=useMemo(()=>summary.filter(s=>!search||s.state.toLowerCase().includes(search.toLowerCase())),[summary,search]);
+  const sd=sel?stateData[sel]:null;
+
+  const SectionBlock=({title,icon,items,renderRow})=>{
+    if(!items||!items.length)return null;
+    return(
+      <div style={{marginBottom:24}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+          <span style={{fontSize:20}}>{icon}</span>
+          <h3 style={{margin:0,fontSize:FS.md,fontWeight:700,color:N}}>{title}</h3>
+          <Badge text={String(items.length)} color={N} textColor={W}/>
+        </div>
+        <Table cols={["Status","Entity","Comment","Details","Zone / Location"]} rows={items.map(renderRow)}/>
+      </div>
+    );
+  };
+
+  return(
+    <div>
+      <SectionHeader title="State-wise Activity Tracker" subtitle="Cross-linked with all section tabs — changes sync automatically" count={`${ALL_STATES.length} States/UTs`}/>
+      {!sel?(
+        <div>
+          <div style={{marginBottom:20}}><SearchBar value={search} onChange={setSearch} placeholder="Search state / UT..."/></div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:12}}>
+            {filteredStates.map(s=>{
+              const pct=s.total?Math.round(((s.green+s.yellow*0.5)/s.total)*100):0;
+              return(
+                <div key={s.state} onClick={()=>setSel(s.state)} style={{background:W,border:`1px solid ${GR}`,borderRadius:10,padding:"16px 18px",cursor:"pointer",transition:"all 0.2s",boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}
+                  onMouseEnter={e=>{e.currentTarget.style.borderColor=G;e.currentTarget.style.boxShadow="0 4px 12px rgba(0,0,0,0.1)";}}
+                  onMouseLeave={e=>{e.currentTarget.style.borderColor=GR;e.currentTarget.style.boxShadow="0 1px 4px rgba(0,0,0,0.06)";}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                    <span style={{fontSize:FS.md,fontWeight:700,color:N}}>{s.state}</span>
+                    <span style={{fontSize:FS.sm,color:GD}}>{s.total} entities</span>
+                  </div>
+                  <div style={{height:6,background:GR,borderRadius:3,overflow:"hidden",marginBottom:10}}>
+                    <div style={{height:"100%",borderRadius:3,background:pct>70?"#2E7D32":pct>30?"#E6A817":"#C62828",width:pct+"%",transition:"width 0.3s"}}/>
+                  </div>
+                  <div style={{display:"flex",gap:12,fontSize:FS.sm}}>
+                    <span style={{display:"flex",alignItems:"center",gap:4}}><span style={{width:10,height:10,borderRadius:"50%",background:"#2E7D32",display:"inline-block"}}/>{s.green}</span>
+                    <span style={{display:"flex",alignItems:"center",gap:4}}><span style={{width:10,height:10,borderRadius:"50%",background:"#E6A817",display:"inline-block"}}/>{s.yellow}</span>
+                    <span style={{display:"flex",alignItems:"center",gap:4}}><span style={{width:10,height:10,borderRadius:"50%",background:"#C62828",display:"inline-block"}}/>{s.red}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ):(
+        <div>
+          <button onClick={()=>setSel("")} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 16px",background:OW,border:`1px solid ${GR}`,borderRadius:6,cursor:"pointer",fontSize:FS.base,color:N,fontWeight:600,marginBottom:20}}>
+            ← Back to all States
+          </button>
+          <div style={{background:N,borderRadius:10,padding:"18px 24px",marginBottom:24,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
+            <div>
+              <h2 style={{margin:"0 0 4px",color:W,fontSize:FS.xl}}>{sel}</h2>
+              <p style={{margin:0,color:"#9AB0CC",fontSize:FS.sm}}>All sector entities in this state</p>
+            </div>
+            {(()=>{const s=summary.find(x=>x.state===sel);return s?(
+              <div style={{display:"flex",gap:16}}>
+                <div style={{textAlign:"center"}}><p style={{margin:0,fontSize:22,fontWeight:800,color:"#66BB6A"}}>{s.green}</p><p style={{margin:0,fontSize:11,color:"#9AB0CC"}}>Done</p></div>
+                <div style={{textAlign:"center"}}><p style={{margin:0,fontSize:22,fontWeight:800,color:"#FFD54F"}}>{s.yellow}</p><p style={{margin:0,fontSize:11,color:"#9AB0CC"}}>In Progress</p></div>
+                <div style={{textAlign:"center"}}><p style={{margin:0,fontSize:22,fontWeight:800,color:"#EF5350"}}>{s.red}</p><p style={{margin:0,fontSize:11,color:"#9AB0CC"}}>Not Started</p></div>
+                <div style={{textAlign:"center"}}><p style={{margin:0,fontSize:22,fontWeight:800,color:GL}}>{s.total}</p><p style={{margin:0,fontSize:11,color:"#9AB0CC"}}>Total</p></div>
+              </div>
+            ):null;})()}
+          </div>
+
+          <SectionBlock title="Transmission Utility" icon="🔌" items={sd.transcos} renderRow={t=>{const k="tc_"+t.utility;return[
+            <StatusBall id={k} tracking={tTc} setTracking={sTc}/>,
+            <strong style={{color:N,fontSize:FS.base}}>{t.utility}</strong>,
+            <CommentBox id={k} tracking={tTc} setTracking={sTc}/>,
+            <span style={{fontSize:FS.sm}}>{t.hq}</span>,
+            <Badge text={t.zone} color={ZONE_COL[t.zone]||GD} textColor={W}/>
+          ];}}/>
+
+          <SectionBlock title="DISCOMs" icon="🏘️" items={sd.discoms} renderRow={d=>{const k="dc_"+d.name;return[
+            <StatusBall id={k} tracking={tDc} setTracking={sDc}/>,
+            <strong style={{color:N,fontSize:FS.base}}>{d.name}</strong>,
+            <CommentBox id={k} tracking={tDc} setTracking={sDc}/>,
+            <span style={{fontSize:FS.sm}}>{d.sector}</span>,
+            <Badge text={d.zone} color={ZONE_COL[d.zone]||GD} textColor={W}/>
+          ];}}/>
+
+          <SectionBlock title="Generation Companies" icon="🔋" items={sd.generation} renderRow={g=>{const k="gen_"+g.company;return[
+            <StatusBall id={k} tracking={tGen} setTracking={sGen}/>,
+            <strong style={{color:N,fontSize:FS.base}}>{g.company}</strong>,
+            <CommentBox id={k} tracking={tGen} setTracking={sGen}/>,
+            <span style={{fontSize:FS.sm}}>{g.address}</span>,
+            <Badge text={g.zone} color={ZONE_COL[g.zone]||GD} textColor={W}/>
+          ];}}/>
+
+          <SectionBlock title="Nodal RE Agency" icon="☀️" items={sd.nodal} renderRow={a=>{const k="nodal_"+a.agency;return[
+            <StatusBall id={k} tracking={tNod} setTracking={sNod}/>,
+            <strong style={{color:N,fontSize:FS.base}}>{a.agency}</strong>,
+            <CommentBox id={k} tracking={tNod} setTracking={sNod}/>,
+            <span style={{fontSize:FS.sm}}>{a.address}</span>,
+            <Badge text={a.zone} color={ZONE_COL[a.zone]||GD} textColor={W}/>
+          ];}}/>
+
+          <SectionBlock title="EPC Companies" icon="🏗️" items={sd.epc} renderRow={e=>{const k="epc"+e.tier+"_"+e.name;return[
+            <StatusBall id={k} tracking={tEpc} setTracking={sEpc}/>,
+            <strong style={{color:N,fontSize:FS.base}}>{e.name}</strong>,
+            <CommentBox id={k} tracking={tEpc} setTracking={sEpc}/>,
+            <span style={{fontSize:FS.sm}}>{e.location}</span>,
+            <Badge text={"Tier "+e.tier} color={e.tier==="1"?G:e.tier==="2"?NM:GD} textColor={W}/>
+          ];}}/>
+
+          <SectionBlock title="Transformer Manufacturers" icon="🏭" items={sd.manufacturers} renderRow={m=>{const k="m"+m.tier+"_"+m.name;return[
+            <StatusBall id={k} tracking={tMfr} setTracking={sMfr}/>,
+            <strong style={{color:N,fontSize:FS.base}}>{m.name}</strong>,
+            <CommentBox id={k} tracking={tMfr} setTracking={sMfr}/>,
+            <span style={{fontSize:FS.sm}}>{m.location}</span>,
+            <Badge text={"Tier "+m.tier} color={m.tier==="1"?G:m.tier==="2"?NM:GD} textColor={W}/>
+          ];}}/>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── PAGES ─────────────────────────────────────────────────────────────────────
 
 function Dashboard(){
@@ -1013,6 +1191,7 @@ const NAV=[
   {id:"nodal",label:"Nodal RE Agencies",icon:"☀️"},
   {id:"epc",label:"EPC Companies",icon:"🏗️"},
   {id:"manufacturers",label:"Manufacturers",icon:"🏭"},
+  {id:"states",label:"States",icon:"🗺️"},
   {id:"kpi",label:"KPI Scorecard",icon:"🎯"},
   {id:"risk",label:"Risk Framework",icon:"⚠️"},
   {id:"training",label:"Training Plan",icon:"🎓"},
@@ -1099,7 +1278,7 @@ function LoginScreen({ onLogin }) {
 
 function MainDashboard() {
   const [active,setActive]=useState("dashboard");
-  const pages={dashboard:<Dashboard/>,advisory:<Advisory/>,cea:<CEAOffices/>,psu:<PSUUtilities/>,transcos:<StateTranscos/>,discoms:<DISCOMs/>,generation:<Generation/>,nodal:<NodalAgencies/>,epc:<EPCCompanies/>,manufacturers:<Manufacturers/>,kpi:<KPI/>,risk:<Risk/>,training:<Training/>};
+  const pages={dashboard:<Dashboard/>,advisory:<Advisory/>,cea:<CEAOffices/>,psu:<PSUUtilities/>,transcos:<StateTranscos/>,discoms:<DISCOMs/>,generation:<Generation/>,nodal:<NodalAgencies/>,epc:<EPCCompanies/>,manufacturers:<Manufacturers/>,states:<StatesView/>,kpi:<KPI/>,risk:<Risk/>,training:<Training/>};
   const handleLogout = () => { sessionStorage.removeItem("sotl_auth"); window.location.reload(); };
   return(
     <div style={{display:"flex",height:"100vh",fontFamily:"system-ui,sans-serif",background:OW}}>
