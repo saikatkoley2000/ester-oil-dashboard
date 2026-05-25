@@ -1020,7 +1020,7 @@ const NAV=[
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
 
-const VALID_USER = "skoley@savita.com";
+const VALID_DOMAIN = "@savita.com";
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 function getTodayPassword() {
@@ -1041,7 +1041,7 @@ function LoginScreen({ onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
-    if (user.trim().toLowerCase() !== VALID_USER) { setError("Invalid username"); return; }
+    if (!user.trim().toLowerCase().endsWith(VALID_DOMAIN)) { setError("Only @savita.com email addresses are allowed"); return; }
     if (pass !== getTodayPassword()) { setError("Invalid password"); return; }
     sessionStorage.setItem("sotl_auth", "1");
     onLogin();
