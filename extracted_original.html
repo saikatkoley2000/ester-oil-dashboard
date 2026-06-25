@@ -1,0 +1,352 @@
+﻿<USER_REQUEST>
+<!-- Ester Insulating Fluids &mdash; Knowledge Platform v2 (full content) -->
+<style>
+:root{
+  --ink:#15201c;--paper:#f3f0e7;--paper2:#eae5d6;--card:#fbf9f3;
+  --leaf:#2f6f4e;--leafd:#1e4d36;--amber:#c9821f;--syn:#2b6c8f;--mineral:#8a6d3b;--purple:#7a4fa3;
+  --line:#cdc6b4;--mono:'IBM Plex Mono',ui-monospace,monospace;--serif:'Fraunces',Georgia,serif;--sans:'Inter',system-ui,sans-serif;
+  --sh:0 8px 26px -16px #15201c55;
+}
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+*{box-sizing:border-box}
+.wrap{font-family:var(--sans);color:var(--ink);background:radial-gradient(120% 80% at 80% -10%,#fff5,transparent 50%),var(--paper);margin:0;line-height:1.55;overflow-x:hidden}
+.topnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:2px;flex-wrap:wrap;padding:10px 16px;background:#f3f0e7ee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--serif);font-weight:600;font-size:17px;margin-right:12px;display:flex;align-items:center;gap:8px}
+.brand .dot{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#5fae84,var(--leafd))}
+.navbtn{font:500 12.5px/1 var(--sans);border:1px solid transparent;background:none;padding:8px 11px;border-radius:9px;cursor:pointer;color:#445}
+.navbtn:hover{background:#fff;border-color:var(--line)}
+.navbtn.active{background:var(--ink);color:var(--paper)}
+.navbtn.accent{margin-left:auto;background:var(--leaf);color:#fff}
+section.view{display:none;padding:0 20px 70px;max-width:1080px;margin:0 auto;animation:fade .35s}
+section.view.show{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hero{padding:46px 0 22px;border-bottom:1px solid var(--line)}
+.eyebrow{font:600 11px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--leafd);margin-bottom:14px}
+h1.title{font-family:var(--serif);font-weight:600;font-size:clamp(28px,5vw,48px);letter-spacing:-.02em;line-height:1.05;margin:0 0 12px}
+h1.title em{font-style:italic;color:var(--leafd)}
+.lede{font-size:16.5px;max-width:64ch;color:#3c463f}
+.crumbs{font:500 12px/1 var(--mono);color:#7a8079;margin:26px 0 0;display:flex;gap:8px}
+.crumbs b{color:var(--leafd)}
+.module{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 6px 8px;margin:24px 0;box-shadow:var(--sh)}
+.module>h2{font-family:var(--serif);font-weight:600;font-size:22px;margin:16px 18px 4px}
+.module>.sub{margin:0 18px 12px;color:#5b635c;font-size:14px}
+.ladder{display:flex;flex-wrap:wrap;padding:6px 10px 10px}
+.lvltab{flex:1;min-width:120px;border:none;background:none;cursor:pointer;text-align:left;padding:11px 13px;border-radius:11px;color:#5a625b}
+.lvltab .lk{font:600 10px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;opacity:.8}
+.lvltab .lt{font-weight:600;font-size:13.5px;margin-top:5px;display:block}
+.lvltab:hover{background:#fff}.lvltab.on{background:var(--ink);color:var(--paper)}.lvltab.on .lk{color:#9fd9bb}
+.lvlbody{padding:4px 20px 18px}.lvlpane{display:none}.lvlpane.on{display:block;animation:fade .3s}
+.lvlpane p{margin:.2em 0 .8em;font-size:15px}.lvlpane ul{margin:.2em 0 .8em;padding-left:20px}.lvlpane li{margin:.3em 0;font-size:14.5px}
+.barmeter{display:flex;gap:3px;margin:2px 18px 0}.barmeter i{height:4px;flex:1;border-radius:3px;background:var(--paper2)}.barmeter i.fill{background:var(--leaf)}
+.srcrow{display:flex;flex-wrap:wrap;gap:7px;margin:8px 18px 14px}
+.tag{font:500 11px/1.3 var(--mono);padding:5px 9px;border-radius:7px;border:1px solid var(--line);background:#fff;color:#4a534c;display:inline-flex;gap:6px;align-items:center}
+.tag::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--leaf)}
+.tag.std::before{background:var(--syn)}.tag.test::before{background:var(--amber)}.tag.paper::before{background:var(--leafd)}.tag.cert::before{background:var(--purple)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:10px 18px 16px;font:500 11.5px/1 var(--sans);color:#6b726a}
+.legend span{display:flex;align-items:center;gap:6px}.legend i{width:9px;height:9px;border-radius:2px}
+.chip{font:600 9.5px/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;padding:3px 7px;border-radius:5px;margin-right:6px;white-space:nowrap}
+.chip.req{background:#2b6c8f1a;color:var(--syn);border:1px solid #2b6c8f44}
+.chip.obs{background:#c9821f1a;color:#9a6213;border:1px solid #c9821f44}
+.chip.int{background:#2f6f4e1a;color:var(--leafd);border:1px solid #2f6f4e44}
+.chip.cat{background:#15201c10;color:#3a443d;border:1px solid #15201c33}
+.chip.prd{background:#7a4fa31a;color:#5e3b80;border:1px solid #7a4fa344}
+.claim{border-left:3px solid var(--line);padding:2px 0 2px 14px;margin:10px 18px}.claim p{margin:.2em 0;font-size:14.5px}
+/* comparison */
+.ctl{display:flex;gap:8px;flex-wrap:wrap;margin:6px 18px 14px}
+.toggle{font:600 12px/1 var(--sans);border:1px solid var(--line);background:#fff;padding:8px 13px;border-radius:20px;cursor:pointer;color:#566;display:flex;align-items:center;gap:7px}
+.toggle .sw{width:9px;height:9px;border-radius:50%}.toggle.mineral .sw{background:var(--mineral)}.toggle.ne .sw{background:var(--amber)}.toggle.se .sw{background:var(--syn)}
+.toggle.off{opacity:.4;text-decoration:line-through}
+.tablewrap{overflow-x:auto;padding:0 12px 6px}
+table.cmp{border-collapse:collapse;width:100%;min-width:560px;font-size:14px;background:#fff;border-radius:12px;overflow:hidden}
+table.cmp th,table.cmp td{padding:10px 13px;text-align:left;border-bottom:1px solid var(--paper2)}
+table.cmp thead th{background:var(--ink);color:var(--paper);font:600 12.5px/1.2 var(--sans)}
+table.cmp thead th.ne{background:linear-gradient(var(--amber),#a86a14)}table.cmp thead th.se{background:linear-gradient(var(--syn),#1f546e)}table.cmp thead th.mineral{background:linear-gradient(#9a7c46,#6f5628)}
+table.cmp td.param{font-weight:600;color:#2a332d}.cmp td .u{color:#8a8f88;font-size:11px;display:block;font-family:var(--mono)}
+table.cmp tr:hover td{background:#faf8f1}td.best{position:relative}td.best::after{content:"&#9650;";font:600 10px/1 var(--mono);color:var(--leaf);position:absolute;top:8px;right:8px}
+.colhide{display:none}
+/* standards library */
+.stdctl{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 16px}
+.stdctl input{flex:1;min-width:200px;font:500 14px/1 var(--sans);padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.filt{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
+.filt button{font:600 12px/1 var(--sans);border:1px solid var(--line);background:#fff;padding:8px 13px;border-radius:20px;cursor:pointer;color:#566}
+.filt button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stdgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.stdcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 17px;box-shadow:var(--sh);border-top:3px solid var(--leaf)}
+.stdcard.ne{border-top-color:var(--amber)}.stdcard.se{border-top-color:var(--syn)}.stdcard.general{border-top-color:var(--leaf)}
+.stdcard .code{font:600 15px/1.2 var(--mono);color:var(--ink)}
+.stdcard .kind{float:right;font:600 9.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--leafd);padding:4px 8px;border-radius:6px}
+.stdcard.ne .kind{background:var(--amber)}.stdcard.se .kind{background:var(--syn)}
+.stdcard h4{font:600 14px/1.35 var(--sans);margin:9px 0 7px;color:#2a332d}
+.stdcard p{font-size:13px;color:#4a534c;margin:0 0 9px}
+.stdcard .src{font:500 11px/1.3 var(--mono);color:#8a8f88;border-top:1px dashed var(--line);padding-top:8px}
+/* FAQ */
+.faqbar{position:sticky;top:54px;z-index:30;background:#f3f0e7f2;backdrop-filter:blur(6px);padding:14px 0 8px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.faqbar input{width:100%;font:500 15px/1 var(--sans);padding:13px 16px;border:1px solid var(--line);border-radius:11px;background:#fff}
+.faqstat{font:500 12px/1 var(--mono);color:#7a8079;margin:9px 2px 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.secfilt{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.secfilt button{font:600 11.5px/1 var(--sans);border:1px solid var(--line);background:#fff;padding:7px 11px;border-radius:18px;cursor:pointer;color:#566}
+.secfilt button.on{background:var(--leaf);color:#fff;border-color:var(--leaf)}
+.secfilt button .n{opacity:.6;font-family:var(--mono);margin-left:5px}
+.qsec{margin:22px 0 8px}
+.qsec>.sh{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.qsec>.sh .st{font-family:var(--serif);font-weight:600;font-size:19px}
+.qsec>.sh .ssrc{font:500 11px/1 var(--mono);color:#8a8f88}
+.qsec>.sh .badge{font:600 9px/1 var(--mono);padding:3px 7px;border-radius:5px;letter-spacing:.06em}
+.badge.ne{background:#c9821f22;color:#9a6213}.badge.se{background:#2b6c8f22;color:var(--syn)}.badge.general{background:#15201c12;color:#45504a}
+.qa{border:1px solid var(--line);border-radius:11px;margin:8px 0;background:var(--card);overflow:hidden}
+.qa>summary{cursor:pointer;list-style:none;padding:13px 16px;font:600 14.5px/1.45 var(--sans);color:#222;display:flex;gap:11px;align-items:flex-start}
+.qa>summary::-webkit-details-marker{display:none}
+.qa>summary .qn{font:600 11px/1.6 var(--mono);color:var(--leaf);flex-shrink:0}
+.qa>summary .tw{margin-left:auto;color:#aaa;transition:transform .2s;flex-shrink:0}
+.qa[open]>summary .tw{transform:rotate(45deg)}
+.qa[open]>summary{background:#fff;border-bottom:1px solid var(--line)}
+.qa .ans{padding:13px 16px 15px 41px;font-size:14px;color:#3a443d;line-height:1.6}
+mark{background:#c9821f44;padding:0 2px;border-radius:3px}
+.nores{padding:40px;text-align:center;color:#8a8f88;font-size:15px}
+.morebtn{display:block;width:100%;font:600 13px/1 var(--sans);border:1px dashed var(--line);background:#fff;padding:13px;border-radius:11px;cursor:pointer;color:#566;margin:10px 0}
+.morebtn:hover{background:var(--ink);color:var(--paper)}
+/* tree */
+.treeswitch{display:flex;gap:6px;margin:16px 0 0;flex-wrap:wrap}
+.treeswitch button{font:600 12px/1 var(--sans);border:1px solid var(--line);background:#fff;padding:9px 14px;border-radius:9px;cursor:pointer;color:#566}
+.treeswitch button.on{background:var(--leaf);color:#fff;border-color:var(--leaf)}
+.tview{display:none;margin-top:22px}.tview.on{display:block;animation:fade .35s}
+ul.btree,ul.btree ul{list-style:none;margin:0;padding-left:20px}ul.btree{padding-left:2px;font-size:15px}
+ul.btree li{position:relative;padding:4px 0 4px 16px}
+ul.btree li::before{content:"";position:absolute;left:0;top:14px;width:9px;height:1px;background:var(--line)}
+ul.btree>li{padding-left:0}ul.btree>li::before{display:none}
+.node{cursor:pointer;display:inline-flex;align-items:center;gap:8px;border-radius:7px;padding:3px 8px}
+.node:hover{background:#fff}.node .tw{font:600 11px/1 var(--mono);width:15px;color:var(--leaf);transition:transform .2s}
+.node.lvl0{font-family:var(--serif);font-weight:600;font-size:19px}.node.lvl1{font-weight:600;font-size:15px}
+.node .badge2{font:600 9px/1 var(--mono);padding:2px 6px;border-radius:5px}
+.node .badge2.ne{background:#c9821f22;color:#9a6213}.node .badge2.se{background:#2b6c8f22;color:var(--syn)}.node .badge2.gen{background:#15201c12;color:#45504a}
+li.collapsed>ul{display:none}li.collapsed>.node .tw{transform:rotate(-90deg)}
+.navmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.navcol{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;box-shadow:var(--sh)}
+.navcol>h3{margin:12px 14px 8px;font:600 14px/1.2 var(--sans);display:flex;align-items:center;gap:8px}
+.navcol>h3 i{width:10px;height:10px;border-radius:3px}
+.navcol ul{list-style:none;margin:0;padding:0 6px 8px}.navcol li{font-size:13px;color:#4a534c;padding:7px 10px;border-radius:8px}
+.navcol li:hover{background:#fff;color:var(--ink)}
+.navcol.found i{background:var(--leaf)}.navcol.ne i{background:var(--amber)}.navcol.se i{background:var(--syn)}.navcol.cmp i{background:var(--purple)}.navcol.tools i{background:var(--ink)}
+.tax{display:grid;gap:12px}
+.taxrow{background:var(--card);border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.taxrow>summary{cursor:pointer;list-style:none;padding:15px 18px;display:flex;gap:14px;align-items:baseline}
+.taxrow>summary::-webkit-details-marker{display:none}
+.taxrow .tn{font:600 13px/1 var(--mono);color:var(--leafd)}.taxrow .tt{font-family:var(--serif);font-weight:600;font-size:17px}
+.taxrow[open]>summary{border-bottom:1px solid var(--line);background:#fff}.taxrow .tbody{padding:6px 20px 16px}
+.taxrow .tbody li{font-size:14px;margin:6px 0;color:#3f4843}.taxrow code{font:500 12px/1 var(--mono);background:#15201c0d;padding:2px 6px;border-radius:5px}
+.pagenav{display:flex;justify-content:space-between;gap:12px;margin:34px 0 0;flex-wrap:wrap}
+.pagenav button{font:600 13px/1 var(--sans);border:1px solid var(--line);background:#fff;padding:14px 18px;border-radius:12px;cursor:pointer;color:var(--ink);flex:1;min-width:200px;text-align:left}
+.pagenav button:hover{background:var(--ink);color:var(--paper)}
+.pagenav button small{display:block;font:500 11px/1 var(--mono);color:#909;margin-bottom:4px;letter-spacing:.05em}
+.pagenav button:hover small{color:#9fd9bb}
+.foot{margin:38px 18px 0;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:#8a8f88}
+.statband{display:flex;gap:18px;flex-wrap:wrap;margin:24px 0 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 20px;box-shadow:var(--sh);flex:1;min-width:130px}
+.stat b{font-family:var(--serif);font-weight:600;font-size:30px;display:block;color:var(--leafd)}
+.stat span{font:500 12px/1.3 var(--mono);color:#7a8079}
+@media(max-width:620px){.lvltab{min-width:46%}}
+</style>
+
+<div class="wrap">
+ <nav class="topnav">
+  <div class="brand"><span class="dot"></span>ESTER&nbsp;OIL<span style="color:#9aa">/</span>knowledge</div>
+  <button class="navbtn active" data-go="p1">What &amp; Why</button>
+  <button class="navbtn" data-go="p2">Compare</button>
+  <button class="navbtn" data-go="std">Standards</button>
+  <button class="navbtn" data-go="faq">Q&amp;A Library</button>
+  <button class="navbtn accent" data-go="tree">&#8984; Tree</button>
+ </nav>
+
+ <!-- PAGE 1 -->
+ <section class="view show" id="p1">
+  <div class="hero">
+   <div class="eyebrow">Foundations &middot; Page 01</div>
+   <h1 class="title">What is ester oil &mdash; and <em>why</em> put it in a transformer?</h1>
+   <p class="lede">Ester fluids are polar, oxygen-bearing liquids that insulate and cool a transformer like mineral oil does &mdash; but ignite far less easily, biodegrade readily, and keep the solid paper insulation drier. Build from a one-line definition up to design-level trade-offs, every figure tied to its source.</p>
+   <div class="statband">
+    <div class="stat"><b>598</b><span>sourced Q&amp;As in the library</span></div>
+    <div class="stat"><b>14</b><span>standards &amp; certifications</span></div>
+    <div class="stat"><b>3</b><span>fluids compared, 16 parameters</span></div>
+   </div>
+  </div>
+  <div class="legend">
+   <span><i style="background:#2b6c8f"></i>Standard requirement</span>
+   <span><i style="background:#c9821f"></i>Observed test result</span>
+   <span><i style="background:#2f6f4e"></i>Interpretation</span>
+   <span><i style="background:#7a4fa3"></i>Certification</span>
+  </div>
+  <div class="module"><h2>What ester oil actually is</h2><p class="sub">From plain definition to molecular structure and the oil&ndash;cellulose stress relationship.</p>
+    <div class="barmeter" id="bm-a"></div>
+    <div class="ladder" data-mod="a"><button class="lvltab on" data-l="0"><span class="lk">Level 1</span><span class="lt">Beginner</span></button><button class="lvltab " data-l="1"><span class="lk">Level 2</span><span class="lt">Working</span></button><button class="lvltab " data-l="2"><span class="lk">Level 3</span><span class="lt">Technical</span></button><button class="lvltab " data-l="3"><span class="lk">Level 4</span><span class="lt">Expert</span></button></div>
+    <div class="lvlbody" data-body="a"><div class="lvlpane on"><p>An <b>insulating fluid</b> fills a transformer and does three jobs: it <b>insulates</b> live parts, <b>cools</b> them by carrying heat to the radiators, and acts as a <b>diagnostic</b> medium. Ester oil is one such fluid &mdash; built around an <b>ester</b>, a molecule formed when an acid meets an alcohol. That oxygen-containing structure makes it behave differently from ordinary mineral oil.</p></div><div class="lvlpane "><p>Ester fluids split by origin: <b>natural ester</b>, pressed from vegetable seed oils (rapeseed, soybean), and <b>synthetic ester</b>, built by reacting acids with alcohols. Both carry <b>ester linkages</b> that make the molecule <b>polar</b> &mdash; driving the headline behaviours: high moisture affinity, higher permittivity, ready biodegradability.</p><ul><li><b>Natural ester</b> &mdash; triacylglycerols with three C18 fatty-acid chains (saturated, mono- or poly-unsaturated).</li><li><b>Synthetic ester</b> &mdash; engineered polyol-ester, more uniform and more oxidation-stable.</li></ul></div><div class="lvlpane "><p>Fatty-acid composition sets the physical envelope. The number of <b>double bonds</b> governs viscosity and oxidation stability: more unsaturation lowers oxidation stability &mdash; why natural ester is run in <b>sealed</b> transformers. Polarity has a direct electrical consequence: ester permittivity (&asymp;3.3) is far closer to cellulose pressboard (&asymp;4.4) than mineral oil (&asymp;2.2).</p></div><div class="lvlpane "><p>In a composite oil&ndash;cellulose system, electric stress divides inversely with permittivity. Because ester sits closer to cellulose, <b>stress is shared more evenly</b> across the barrier rather than concentrating in the oil duct &mdash; a real input to clearance/barrier design and a measurable SFRA effect.</p><p><b>Trade-off:</b> the same linkages that deliver moisture affinity and biodegradability raise viscosity and pour point, feeding the cooling/cold-start design in Module C.</p></div></div>
+    <div class="srcrow"><span class="tag paper">Compatibility study &sect;II</span><span class="tag paper">FRA-permittivity paper</span><span class="tag std">IS 1180 Part 3 &mdash; definitions</span></div></div><div class="module"><h2>Why utilities switch to ester</h2><p class="sub">The four drivers &mdash; fire safety, environment, paper life, overload &mdash; and the evidence under each.</p>
+    <div class="barmeter" id="bm-b"></div>
+    <div class="ladder" data-mod="b"><button class="lvltab on" data-l="0"><span class="lk">Level 1</span><span class="lt">Beginner</span></button><button class="lvltab " data-l="1"><span class="lk">Level 2</span><span class="lt">Working</span></button><button class="lvltab " data-l="2"><span class="lk">Level 3</span><span class="lt">Technical</span></button><button class="lvltab " data-l="3"><span class="lk">Level 4</span><span class="lt">Expert</span></button></div>
+    <div class="lvlbody" data-body="b"><div class="lvlpane on"><p>Mineral oil is cheap and proven, but it catches fire relatively easily, pollutes when it leaks, and lets the paper insulation age fast. Ester fluids fix exactly those weaknesses: <b>much harder to ignite</b>, <b>break down harmlessly</b>, and help the transformer <b>last longer</b> and <b>carry more load</b>.</p></div><div class="lvlpane "><p>Four drivers move buyers from mineral oil to ester:</p><ul><li><b>Fire safety</b> &mdash; fire point &gt;300 &deg;C vs ~160 &deg;C; K-class, often self-extinguishing.</li><li><b>Environment</b> &mdash; readily biodegradable (&gt;90% in 28 d, OECD 301), non-toxic.</li><li><b>Paper-life</b> &mdash; fluid pulls moisture out of the kraft paper, slowing aging.</li><li><b>Overload</b> &mdash; tolerates higher temperature &rarr; load harder or build smaller.</li></ul></div><div class="lvlpane "><div class="claim"><p><span class="chip obs">Observed</span><span class="chip prd">Product</span><b>Fire point</b> &mdash; Siemens type test recorded <b>316 &deg;C</b> for Transol Synth 100; UL recorded <b>351.5 &deg;C</b> for bioTRANSOL HF, "4&ndash;5 less hazardous than paraffin oil".</p></div><div class="claim"><p><span class="chip obs">Observed</span><span class="chip prd">Product</span><b>Biodegradation</b> &mdash; Transol Synth 100 reached <b>92.9%</b> at day 28 (OECD 301B); bioTRANSOL HF &gt;98%.</p></div><div class="claim"><p><span class="chip int">Interpretation</span><span class="chip cat">Category</span><b>Paper life</b> &mdash; esters scavenge water via transesterification; natural-ester units can run ~20 &deg;C warmer without extra paper degradation.</p></div></div><div class="lvlpane "><p>Each driver becomes a lever:</p><ul><li><b>Fire</b> &rarr; FM Global approval permits reduced separation distances, waiving fire-barrier walls / water-mist suppression; Transol Synth 100 adds <b>ATEX (Ex II 3G)</b> for Zone-2 atmospheres.</li><li><b>Overload</b> &rarr; +20 &deg;C headroom = higher loading or a smaller, cheaper core.</li><li><b>Paper</b> &rarr; slower hydrolysis can roughly double notional asset life &mdash; but aged-oil acid number runs higher (non-corrosive long-chain fatty acids, no sludge).</li></ul><p><b>Honest gap:</b> "doubles asset life" is a modelled/marketing extrapolation, not a measured endpoint in the reports.</p></div></div>
+    <div class="srcrow"><span class="tag test">Siemens ML138-23 &mdash; 316 &deg;C</span><span class="tag cert">UL UL-US-2203328</span><span class="tag test">OECD 301B &mdash; 92.9%</span><span class="tag cert">FM Class 6933 &middot; ATEX</span></div></div><div class="module"><h2>The cost of those benefits</h2><p class="sub">Viscosity, pour point and price &mdash; the engineering and commercial trade-offs.</p>
+    <div class="barmeter" id="bm-c"></div>
+    <div class="ladder" data-mod="c"><button class="lvltab on" data-l="0"><span class="lk">Level 1</span><span class="lt">Beginner</span></button><button class="lvltab " data-l="1"><span class="lk">Level 2</span><span class="lt">Working</span></button><button class="lvltab " data-l="2"><span class="lk">Level 3</span><span class="lt">Technical</span></button><button class="lvltab " data-l="3"><span class="lk">Level 4</span><span class="lt">Expert</span></button></div>
+    <div class="lvlbody" data-body="c"><div class="lvlpane on"><p>Ester fluids are <b>thicker</b> and <b>cost more</b> than mineral oil. Thicker oil moves heat a little less easily, so cooling must be designed with that in mind.</p></div><div class="lvlpane "><p>Ester runs ~30&ndash;35 mm&sup2;/s at 40 &deg;C vs ~10 for mineral oil &mdash; roughly 3&times;. Higher specific heat and thermal conductivity partly compensate, but cooling is rated <b>KNAN/KNAF</b> (not ONAN/ONAF). Natural ester's higher pour point means <b>sealed</b> designs.</p></div><div class="lvlpane "><p>Viscosity is inversely related to temperature, so the penalty shrinks once hot. Cost runs ~2.2&ndash;2.5&times; mineral oil (NE) and ~6&ndash;7&times; (SE), adding ~10&ndash;15% (NE) or 25&ndash;30% (SE) to unit price.</p></div><div class="lvlpane "><p>Cold climate flips the ranking: synthetic ester's very low pour point (Transol Synth 100: <b>&minus;57 &deg;C</b>) makes it the pick where natural ester would gel. The design question weighs fire/environment driver, ambient temperature and budget &mdash; exactly the Fluid Selector's logic.</p></div></div>
+    <div class="srcrow"><span class="tag">Comparison: Mineral vs Ester</span><span class="tag paper">Super Shakti deck</span><span class="tag test">Siemens ML138-23 &mdash; pour &minus;63 &deg;C</span></div></div>
+  <div class="pagenav">
+   <button data-go="p2"><small>NEXT &rarr;</small>Natural vs Synthetic ester</button>
+   <button data-go="faq"><small>BROWSE &rarr;</small>All 598 Q&amp;As, searchable</button>
+  </div>
+  <div class="foot">Claims are tagged by evidence type and scope. Category-level claims describe the fluid class; product-level claims cite a specific tested fluid (bioTRANSOL HF / Transol Synth 100).</div>
+ </section>
+
+ <!-- PAGE 2 -->
+ <section class="view" id="p2">
+  <div class="hero">
+   <div class="eyebrow">Comparison &middot; Page 02</div>
+   <h1 class="title">Natural vs synthetic ester &mdash; <em>which</em>, and when?</h1>
+   <p class="lede">Same chemistry family, different jobs. Natural ester leads on fire point, biodegradation and paper-life research depth; synthetic ester leads on cold-climate behaviour, oxidation stability and tightly-specified consistency.</p>
+   <div class="crumbs">Home <span>&rsaquo;</span> Compare <span>&rsaquo;</span> <b>Natural vs Synthetic</b></div>
+  </div>
+  <div class="module">
+   <h2>Side-by-side parameters</h2>
+   <p class="sub">Toggle a fluid on or off. "&#9650;" marks the most favourable value per row for the active comparison.</p>
+   <div class="ctl" id="cmpctl">
+    <button class="toggle mineral" data-col="mineral"><span class="sw"></span>Mineral oil <span style="opacity:.6">(reference)</span></button>
+    <button class="toggle ne" data-col="ne"><span class="sw"></span>Natural ester &middot; bioTRANSOL HF</button>
+    <button class="toggle se" data-col="se"><span class="sw"></span>Synthetic ester &middot; Transol Synth 100</button>
+   </div>
+   <div class="tablewrap"><table class="cmp" id="cmptable">
+    <thead><tr><th>Parameter</th><th class="mineral col-mineral">Mineral oil</th><th class="ne col-ne">Natural ester</th><th class="se col-se">Synthetic ester</th></tr></thead>
+    <tbody></tbody></table></div>
+   <div class="srcrow">
+    <span class="tag test">Siemens ML138-23 &mdash; Synth 100 type test</span>
+    <span class="tag cert">UL / Q&amp;A &mdash; bioTRANSOL HF</span>
+    <span class="tag paper">Super Shakti deck</span>
+   </div>
+  </div>
+  <div class="module"><h2>How to choose between them</h2><p class="sub">The decision logic, from rule-of-thumb to design trade-off.</p>
+    <div class="barmeter" id="bm-d"></div>
+    <div class="ladder" data-mod="d"><button class="lvltab on" data-l="0"><span class="lk">Level 1</span><span class="lt">Beginner</span></button><button class="lvltab " data-l="1"><span class="lk">Level 2</span><span class="lt">Working</span></button><button class="lvltab " data-l="2"><span class="lk">Level 3</span><span class="lt">Technical</span></button><button class="lvltab " data-l="3"><span class="lk">Level 4</span><span class="lt">Expert</span></button></div>
+    <div class="lvlbody" data-body="d"><div class="lvlpane on"><p>Rough rule: pick <b>natural ester</b> when fire safety and green credentials lead and the climate is temperate; pick <b>synthetic ester</b> when it gets very cold, the load swings hard, or you need a free-breathing design.</p></div><div class="lvlpane "><ul><li><b>Natural ester wins:</b> highest fire point, fastest biodegradation, deepest paper-life research, lower cost.</li><li><b>Synthetic ester wins:</b> cold climates (&minus;57 &deg;C), oxidation stability (free-breathing), tight spec consistency, fluctuating loads.</li><li><b>Both:</b> K-class fire safety, high moisture tolerance, readily biodegradable, UL + FM approved.</li></ul></div><div class="lvlpane "><div class="claim"><p><span class="chip req">Std req</span><span class="chip cat">Category</span>Synthetic ester &rarr; <b>IEC 61099 / IS 16081</b>; natural ester &rarr; <b>IEC 62770 / IS 16659</b>; in-service limits &rarr; <b>IEC 62975</b>.</p></div><div class="claim"><p><span class="chip obs">Observed</span><span class="chip prd">Product</span>Transol Synth 100 met every IEC 61099:2010 limit (BDV 73 kV, water 3 mg/kg, acidity &lt;0.01, fire 316 &deg;C).</p></div></div><div class="lvlpane "><p>At the design table it is a weighted trade-off:</p><ul><li><b>Ambient extremes</b> dominate &mdash; a &minus;30 &deg;C site rules out natural ester regardless of its fire edge.</li><li><b>Breathing system</b> &mdash; if sealed/Aircell design is undesirable, synthetic ester's oxidation stability decides.</li><li><b>Evidence depth</b> &mdash; for impulse-critical HV designs, natural ester carries deeper independent test backing in this library; synthetic ester's case rests on certification + type-test conformity.</li></ul><p><b>Gap:</b> research-rich on NE, certificate-rich on SE &mdash; informs confidence, not a performance verdict.</p></div></div>
+    <div class="srcrow"><span class="tag std">IEC 61099 / IS 16081</span><span class="tag std">IEC 62770 / IS 16659</span><span class="tag std">IEC 62975</span><span class="tag test">Siemens ML138-23</span></div></div>
+  <div class="pagenav">
+   <button data-go="p1"><small>&larr; PREVIOUS</small>What is ester oil &amp; why use it</button>
+   <button data-go="std"><small>REFERENCE &rarr;</small>Standards &amp; certification library</button>
+  </div>
+ </section>
+
+ <!-- STANDARDS -->
+ <section class="view" id="std">
+  <div class="hero">
+   <div class="eyebrow">Reference &middot; Standards Library</div>
+   <h1 class="title">Standards &amp; <em>certifications</em></h1>
+   <p class="lede">Every specification, test method and approval referenced across the document set &mdash; searchable and filterable. Specifications define the requirement; test reports and certificates carry the evidence.</p>
+  </div>
+  <div class="stdctl"><input id="stdsearch" placeholder="Search standards &mdash; e.g. 62770, biodegradability, fire, ATEX&hellip;"></div>
+  <div class="filt" id="stdfilt">
+   <button class="on" data-f="all">All</button>
+   <button data-f="ne">Natural ester</button>
+   <button data-f="se">Synthetic ester</button>
+   <button data-f="general">General / shared</button>
+   <button data-f="Specification">Specifications</button>
+   <button data-f="Certification">Certifications</button>
+   <button data-f="Test method">Test methods</button>
+  </div>
+  <div class="stdgrid" id="stdgrid"></div>
+  <div class="pagenav">
+   <button data-go="faq"><small>NEXT &rarr;</small>The full Q&amp;A library (598)</button>
+   <button data-go="tree"><small>EXPLORE &rarr;</small>Knowledge tree</button>
+  </div>
+ </section>
+
+ <!-- FAQ LIBRARY -->
+ <section class="view" id="faq">
+  <div class="hero" style="padding-bottom:8px">
+   <div class="eyebrow">Knowledge Base &middot; Q&amp;A Library</div>
+   <h1 class="title">Every question, <em>answered</em></h1>
+   <p class="lede">All 598 Q&amp;As from the project's source documents &mdash; standards, approvals, test reports, technical papers and the insurance proposal &mdash; grouped by source and fully searchable.</p>
+  </div>
+  <div class="faqbar">
+   <input id="faqsearch" placeholder="Search 598 Q&amp;As &mdash; try 'fire point', 'retrofill', 'permittivity', 'ATEX', 'overload'&hellip;">
+   <div class="faqstat"><span id="faqcount"></span><span>Tip: click a question to expand &middot; use the source filters below</span></div>
+  </div>
+  <div class="secfilt" id="secfilt"></div>
+  <div id="faqbody"></div>
+ </section>
+
+ <!-- TREE -->
+ <section class="view" id="tree">
+  <div class="hero">
+   <div class="eyebrow">Navigation &middot; Knowledge Map</div>
+   <h1 class="title">The knowledge tree</h1>
+   <p class="lede">One subject, three lenses: a collapsible learning outline, the app's navigation map, and the expert taxonomy of engineering domains.</p>
+   <div class="treeswitch" id="treeswitch">
+    <button class="on" data-tv="bullet">Learning outline</button>
+    <button data-tv="nav">App navigation</button>
+    <button data-tv="tax">Expert taxonomy</button>
+   </div>
+  </div>
+  <div class="tview on" id="tv-bullet">
+<p class="sub" style="color:#5b635c;margin:0 0 14px">Click any node with a &#9662; to collapse/expand. Badges mark natural-ester, synthetic-ester, or general branches.</p>
+<ul class="btree" id="btree"><li><span class="node lvl0"><span class="tw">&#9662;</span>Ester Insulating Fluids</span><ul>
+<li><span class="node lvl1"><span class="tw">&#9662;</span>1 &middot; What is ester oil?<span class="badge2 gen">GEN</span></span><ul>
+<li><span class="node"><span class="tw"></span>Definition &mdash; ester linkage, polar molecule</span></li>
+<li><span class="node"><span class="tw"></span>Role: insulate &middot; cool &middot; diagnose</span></li></ul></li>
+<li><span class="node lvl1"><span class="tw">&#9662;</span>2 &middot; Why ester in transformers?<span class="badge2 gen">GEN</span></span><ul>
+<li><span class="node"><span class="tw"></span>Fire safety &mdash; fire point &gt;300 &deg;C, K-class</span></li>
+<li><span class="node"><span class="tw"></span>Environment &mdash; readily biodegradable</span></li>
+<li><span class="node"><span class="tw"></span>Paper-life &mdash; moisture scavenging</span></li>
+<li><span class="node"><span class="tw"></span>Overload &mdash; +20 &deg;C headroom</span></li></ul></li>
+<li><span class="node lvl1"><span class="tw">&#9662;</span>3 &middot; Types of ester oil</span><ul>
+<li><span class="node"><span class="tw">&#9662;</span>Natural ester<span class="badge2 ne">NE</span></span><ul>
+<li><span class="node"><span class="tw"></span>Triglycerides, unsaturated C18 acids</span></li>
+<li><span class="node"><span class="tw"></span>Lower oxidation stability &rarr; sealed</span></li>
+<li><span class="node"><span class="tw"></span>Product: bioTRANSOL HF</span></li></ul></li>
+<li><span class="node"><span class="tw">&#9662;</span>Synthetic ester<span class="badge2 se">SE</span></span><ul>
+<li><span class="node"><span class="tw"></span>Engineered polyol-ester</span></li>
+<li><span class="node"><span class="tw"></span>Better low-temp &amp; oxidation behaviour</span></li>
+<li><span class="node"><span class="tw"></span>Product: Transol Synth 100</span></li></ul></li></ul></li>
+<li><span class="node lvl1"><span class="tw">&#9662;</span>4&ndash;9 &middot; Properties &amp; behaviour</span><ul>
+<li><span class="node"><span class="tw"></span>Chemistry &amp; composition</span></li>
+<li><span class="node"><span class="tw"></span>Physical &mdash; viscosity, density, pour/flash/fire point</span></li>
+<li><span class="node"><span class="tw"></span>Electrical &mdash; BDV, permittivity, tan &delta;, impulse</span></li>
+<li><span class="node"><span class="tw"></span>Thermal &mdash; specific heat, conductivity, hot-spot</span></li>
+<li><span class="node"><span class="tw"></span>Fire safety &mdash; fire point, NCV</span></li>
+<li><span class="node"><span class="tw"></span>Environmental &mdash; OECD 201/202/203/301</span></li></ul></li>
+<li><span class="node lvl1"><span class="tw">&#9662;</span>10&ndash;13 &middot; Standards, test &amp; design</span><ul>
+<li><span class="node"><span class="tw"></span>Standards (IEC/IS, UL, FM, ATEX)</span></li>
+<li><span class="node"><span class="tw"></span>Test methods &amp; interpretation</span></li>
+<li><span class="node"><span class="tw"></span>Transformer design implications</span></li>
+<li><span class="node"><span class="tw"></span>Retrofilling &mdash; IEC 62975</span></li></ul></li>
+<li><span class="node lvl1"><span class="tw">&#9662;</span>14&ndash;19 &middot; Application &amp; decision</span><ul>
+<li><span class="node"><span class="tw"></span>Application areas</span></li>
+<li><span class="node"><span class="tw"></span>Limitations / failure risks</span></li>
+<li><span class="node"><span class="tw"></span>Comparison with mineral oil</span></li>
+<li><span class="node"><span class="tw"></span>Insurance &amp; risk (ICICI Lombard)</span></li>
+<li><span class="node"><span class="tw"></span>FAQs &middot; decision logic</span></li></ul></li></ul></li></ul></div>
+
+<div class="tview" id="tv-nav"><div class="navmap">
+<div class="navcol found"><h3><i></i>Foundations</h3><ul><li>Ester Oil Basics</li><li>Why Ester in Transformers</li><li>Transformer Insulation 101</li><li>Ester vs Mineral (intro)</li></ul></div>
+<div class="navcol ne"><h3><i></i>Natural Ester</h3><ul><li>Overview &amp; Chemistry</li><li>Properties</li><li>Paper-Life &amp; Overload</li><li>Impulse &amp; Dielectric</li><li>Compatibility</li><li>Standards &amp; Approvals</li><li>Test Evidence</li></ul></div>
+<div class="navcol se"><h3><i></i>Synthetic Ester</h3><ul><li>Overview &amp; Chemistry</li><li>Properties &amp; Cold-Climate</li><li>Fire &amp; Calorific</li><li>Environmental &amp; Toxicity</li><li>Standards &amp; Approvals</li><li>Test Evidence</li></ul></div>
+<div class="navcol cmp"><h3><i></i>Compare</h3><ul><li>Natural vs Synthetic</li><li>Ester vs Mineral</li><li>Property Dashboard</li></ul></div>
+<div class="navcol tools"><h3><i></i>Standards &amp; Evidence</h3><ul><li>Standards Library</li><li>Q&amp;A Library (598)</li><li>Approvals wall</li></ul></div>
+<div class="navcol tools"><h3><i></i>Tools &amp; Resources</h3><ul><li>Fluid Selector</li><li>Retrofilling Advisor</li><li>Decision Tree</li><li>Insurance &amp; Risk</li></ul></div>
+</div></div>
+
+<div class="tview" id="tv-tax"><div class="tax">
+<details class="taxrow" open><summary><span class="tn">01</span><span class="tt">Molecular &amp; Chemical</span></summary><div class="tbody"><ul><li>Triglyceride vs polyol-ester architecture</li><li>Fatty-acid saturation &rarr; oxidation stability</li><li>Ester linkage &rarr; polarity &rarr; permittivity</li><li>Transesterification &amp; cellulose grafting <code>FTIR/XPS</code></li></ul></div></details>
+<details class="taxrow"><summary><span class="tn">02</span><span class="tt">Physico-Chemical</span></summary><div class="tbody"><ul><li>Viscosity&ndash;temperature curves <code>piecewise-linear</code></li><li>Density, pour point, crystallization</li><li>Moisture saturation &amp; hygroscopicity</li></ul></div></details>
+<details class="taxrow"><summary><span class="tn">03</span><span class="tt">Dielectric</span></summary><div class="tbody"><ul><li>AC BDV &amp; moisture tolerance</li><li>Permittivity matching &amp; stress sharing</li><li>Lightning impulse &mdash; polarity, 1% BDV, Weibull</li><li>SFRA frequency response</li></ul></div></details>
+<details class="taxrow"><summary><span class="tn">04</span><span class="tt">Thermal</span></summary><div class="tbody"><ul><li>Specific heat, conductivity, energy-to-fire-point</li><li>Hot-spot &amp; top-oil rise; fan placement</li><li>Continuous thermal overload</li></ul></div></details>
+<details class="taxrow"><summary><span class="tn">05</span><span class="tt">Insulation System</span></summary><div class="tbody"><ul><li>Paper-life kinetics; +20 &deg;C margin</li><li>Material compatibility <code>ASTM D3455</code></li></ul></div></details>
+<details class="taxrow"><summary><span class="tn">06</span><span class="tt">Safety, Environmental &amp; Regulatory</span></summary><div class="tbody"><ul><li>Fire point, NCV, FM / ATEX logic</li><li>OECD biodegradability &amp; toxicity suite</li><li>Standards conformity matrix</li></ul></div></details>
+<details class="taxrow"><summary><span class="tn">07</span><span class="tt">Application &amp; Lifecycle</span></summary><div class="tbody"><ul><li>Retrofilling <code>IEC 62975</code></li><li>Fluid selection by climate/fire/environment</li><li>Insurance &amp; risk underwriting</li></ul></div></details>
+</div></div>
+  <div class="pagenav">
+   <button data-go="p1"><small>READ &rarr;</small>Page 1 &middot; What &amp; Why</button>
+   <button data-go="faq"><small>BROWSE &rarr;</small>Q&amp;A library</button>
+  </div>
+ </section>
+</div>
+
+<script>window.APPDATA={"qa": [{"intro": "Here is the updated list of all 35 Q&As with \"IS 1180 Part 3\" replacing \"this document\" as you requested, ready for you to paste into Antigravity:", "items": [{"q": "What exactly are natural esters?", "a": "Natural esters are vegetable oils that are obtained from seeds and other suitable biological materials. From a chemical standpoint, these oils are primarily comprised of triglycerides."}, {"q": "How does IS 1180 Part 3 define synthetic organic esters?", "a": "A synthetic organic ester is defined as the reaction product resulting from the combination of an acid and an alcohol. They are carefully manufactured from selected raw materials to create a product tailored specifically for transformer applications."}, {"q": "Why are additives mixed into natural ester liquids?", "a": "Additives are deliberately introduced into natural ester insulating liquids to improve certain performance characteristics. Specifically, they help enhance the oil's pour point, viscosity, foaming, and overall oxidation stability."}, {"q": "Could you give me some examples of these additives?", "a": "Yes, some common examples of additives include antioxidants, pour-point depressants, refining process improvers, and colors."}, {"q": "Are natural esters recommended for all types of transformers?", "a": "No, natural esters are only recommended for transformers that are not open to the atmosphere, such as sealed transformers or non-sealed units equipped with a proper liquid preservation system. This restriction is because natural esters are highly prone to rapid oxidation when exposed to air."}, {"q": "Can synthetic organic esters be used in open or breathing systems?", "a": "Yes, synthetic organic esters are blended with specific additives to improve oxidation stability, making them suitable for breathing systems where the liquid has free access to oxygen from the air. They can be safely used in non-sealed and sealed transformers without the need for any preservation system."}, {"q": "If I use a natural ester in a non-sealed transformer, what precautions must I take?", "a": "If you are using a natural ester in a non-sealed transformer, you must use a suitable liquid preservation system, such as airbags inside the conservator. This is crucial to prevent the natural ester liquid from coming into direct contact with the atmosphere."}, {"q": "IS 1180 Part 3 mentions a \"Pad Mounted Transformer\". What does that mean?", "a": "A pad mounted transformer is an outdoor transformer utilized as part of an underground distribution system. It features enclosed compartments for high and low voltage cables entering from below, is of a completely sealed construction, and is mounted on a foundation pad."}, {"q": "What does Type 'B' insulation refer to?", "a": "Type 'B' insulation refers to Thermally Upgraded Paper (TUP) or class 130 \u00b0C/140 \u00b0C paper used on winding conductors, or an enamel coating of a minimum 130 \u00b0C class. It also includes other conventional insulating materials immersed in the ester liquid."}, {"q": "What is the required type of cooling according to the temperature rise limits?", "a": "IS 1180 Part 3 specifies that the required type of cooling shall be KNAN, in accordance with the IS 2026 (Part 2) standard."}, {"q": "How is the efficiency of a transformer declared and calculated?", "a": "The declared efficiency of the equipment is calculated simply as the ratio of the transformer's output in kilowatts (kW) to its input in kilowatts (kW)."}, {"q": "What three-phase transformer ratings are covered by IS 1180 Part 3?", "a": "For three-phase transformers, IS 1180 Part 3 covers ratings up to and including 2,500 kVA for both non-sealed and sealed types."}, {"q": "What single-phase transformer ratings are covered?", "a": "For single-phase transformers, IS 1180 Part 3 specifically covers ratings up to and including 100 kVA."}, {"q": "How does IS 1180 Part 3 handle rounding off numerical values during testing?", "a": "For the purpose of deciding whether a requirement is complied with, any final observed or calculated value must be rounded off in accordance with the rules laid out in IS 2 : 1960. The number of significant places retained should exactly match the specified value in IS 1180 Part 3."}, {"q": "Which Indian Standard specifies unused natural esters for transformers?", "a": "The relevant specification for unused natural esters intended for transformers and similar electrical equipment is covered by IS 16659 : 2017."}, {"q": "Which standard should I refer to for unused synthetic organic esters?", "a": "You should refer to IS 16081 : 2013, which provides the specifications for unused synthetic organic esters for electrical purposes."}, {"q": "Is there a standard recommended for interpreting dissolved gases in ester oils?", "a": "Yes, you can refer to IS 16785 : 2018 or IEEE Std. C57.155 : 2014, which act as guides for the interpretation of gases generated in transformers immersed in natural and synthetic organic esters."}, {"q": "Where can I find guidance on the acceptance and maintenance of natural ester fluids?", "a": "For proper guidance on the acceptance and maintenance of natural ester fluids, you can consult IS 16899 : 2019 and IEC 62975 : 2021."}, {"q": "What information is required to be provided regarding transformer fittings?", "a": "IS 1180 Part 3 requires an indication of the specific fittings needed, as well as an indication of the side from which items like meters, rating plates, and liquid-level indicators can be easily read."}, {"q": "What special information might be required regarding lightning tests?", "a": "As part of the special information requirements, it may be necessary to explicitly state whether a lightning impulse voltage test is required for the transformer."}, {"q": "What is the primary advantage of using ester liquids over mineral oil?", "a": "The main advantage of an ester liquid is its significantly higher fire point, which is above 300 \u00b0C, offering enhanced fire safety and environmental benefits."}, {"q": "How many energy efficiency levels are specified in IS 1180 Part 3 for ester liquid immersed transformers?", "a": "IS 1180 Part 3 explores the possibility of progressively using highly efficient transformers and specifies five energy efficiency levels: level 1, 2, 3, 4, and 5."}, {"q": "How does IS 1180 (Part 3) differ from IS 1180 (Part 1)?", "a": "IS 1180 (Part 1) specifies requirements for mineral oil immersed distribution transformers, while IS 1180 Part 3 was specifically created to cover natural and synthetic organic ester liquid immersed transformers."}, {"q": "How does IS 1180 Part 3 define a \"Sealed Type Transformer\"?", "a": "A sealed type transformer is a non-breathing transformer, meaning it is sealed so there is no significant interchange between its internal contents and the external atmosphere. It also does not have a conservator."}, {"q": "What material must be used for the gaskets in ester-filled transformers?", "a": "Gaskets must be made of synthetic rubber or synthetic rubberized cork that is specifically resistant to hot transformer ester liquid."}, {"q": "What are the requirements for the pipe that connects the conservator to the main tank?", "a": "The inside diameter of the connecting pipe should be between 25 mm to 50 mm."}, {"q": "Why should the connecting pipe project at least 20 mm above the bottom of the conservator?", "a": "Projecting the pipe at least 20 mm above the bottom creates a sump, which is designed to collect any impurities."}, {"q": "What standard should be referenced to check the transformer's ability to withstand external short circuits?", "a": "The performance of the transformer under external short-circuit conditions must comply with IS 2026 (Part 5)."}, {"q": "How is the routine ester liquid leakage test conducted on an assembled transformer?", "a": "The assembled transformer (with all fittings and bushings) is tested at a pressure equivalent to twice the normal head measured at the base of the tank for 8 hours. To pass, there must be no leakage at any point."}, {"q": "Are the leakage test conditions different for a transformer tank with corrugations?", "a": "Yes, for tanks with corrugations, the ester liquid leakage test is performed at a pressure of 15 kPa measured at the top of the tank for 6 hours, and there must be no leakage."}, {"q": "What is the required air pressure test for sealed type transformers with welded covers?", "a": "They must be tested at an air pressure of 80 kPa above atmospheric pressure, which is maintained inside the tank for 10 minutes without any leaks."}, {"q": "When submitting an enquiry or order, what specific information about the installation site's altitude must be provided?", "a": "The purchaser must explicitly specify the altitude above mean sea-level if the installation site is in excess of 1,000 meters."}, {"q": "How should single-phase transformers be mounted?", "a": "Single-phase transformers are designed as pole-mounted types and must be provided with two mounting lugs, made from steel of a minimum 5 mm thickness, for fixing the transformer to a single pole using two 20 mm diameter bolts."}, {"q": "What are the mounting base requirements for three-phase transformers up to 200 kVA?", "a": "The under-base of these transformers must be equipped with two channels of a minimum size of 75 mm \u00d7 40 mm to make them suitable for fixing directly to a platform or a plinth."}, {"q": "What information must be declared to indicate a transformer's efficiency?", "a": "The declared efficiency is defined as the ratio of the output in kW to the input i
+<truncated 256894 bytes>
+
+NOTE: The output was truncated because it was too long. Use a more targeted query or a smaller range to get the information you need.
